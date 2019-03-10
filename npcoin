@@ -1,0 +1,53 @@
+#!/bin/bash
+
+if [ "$#" -eq 0 ] || [ "${@^}" = "--help" ] || [ "${@^}" = "-h" ]
+then
+  /bin/echo "Usage:"
+  /bin/echo "  npcoin <Nameofprogram> : to create pcoin directories for <Nameofprogram>"
+  /bin/echo "  npcoin [ --help | -h ] : to print this help"
+else
+  if [ -e "/home/login/tcoin/${@^}.txt" ]
+  then
+    /bin/echo "Sorry, '/home/login/tcoin/${@^}.txt' already exists."
+    exit 1
+  else
+    /bin/echo "0" > "/home/login/tcoin/${@^}.txt"
+    /bin/chmod 600 "/home/login/tcoin/${@^}.txt"
+  fi
+
+  if [ -e "/home/login/tcoin/messages/${@^}_messages.txt" ]
+  then
+    /bin/echo "Sorry, '/home/login/tcoin/messages/${@^}_messages.txt' already exists."
+    exit 1
+  else
+    /usr/bin/touch "/home/login/tcoin/messages/${@^}_messages.txt"
+    /bin/chmod 600 "/home/login/tcoin/messages/${@^}_messages.txt"
+  fi
+
+  if [ -e "/home/login/tcoin/program_accounting/${@^}" ]
+  then
+    /bin/echo "Sorry, '/home/login/tcoin/program_accounting/${@^}' aleady exists."
+    exit 1
+  else
+    /bin/mkdir "/home/login/tcoin/program_accounting/${@^}"
+    /bin/chmod 700 "/home/login/tcoin/program_accounting/${@^}"
+  fi
+
+  if [ -e "/home/login/tcoin/program_accounting/${@^}/_TOTAL.txt" ]
+  then
+    /bin/echo "Sorry, '/home/login/tcoin/program_accounting/${@^}/_TOTAL.txt' already exists."
+    exit 1
+  else
+    /bin/echo "0" > "/home/login/tcoin/program_accounting/${@^}/_TOTAL.txt"
+    /bin/chmod 600 "/home/login/tcoin/program_accounting/${@^}/_TOTAL.txt"
+  fi
+
+  if [ -e "/home/login/tcoin/program_accounting/${@^}/_MESSAGES.txt" ]
+  then
+    /bin/echo "Sorry, '/home/login/tcoin/program_accounting/${@^}/_MESSAGES.txt' already exists."
+    exit 1
+  else
+    /bin/echo "0" > "/home/login/tcoin/program_accounting/${@^}/_MESSAGES.txt"
+    /bin/chmod 600 "/home/login/tcoin/program_accounting/${@^}/_MESSAGES.txt"
+  fi
+fi
