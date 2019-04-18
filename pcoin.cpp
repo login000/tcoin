@@ -32,7 +32,7 @@
 #define BIN_ECHO_CMD "/bin/echo $$"
 #define KROWBAR_SCORE_PATH "/home/krowbar/Code/irc/data/tildescores.txt"
 #define WHOAMI_PATH "/usr/bin/whoami"
-#define TROIDO_DACOINS_CMD "cd /home/troido/daily_adventure/client/ && /home/troido/daily_adventure/client/daclient printinfo 2>&1 | /bin/grep -oP '(?<=\"coins\": )\[[:digit:]]+'"
+#define TROIDO_DACOINS_CMD "cd /home/troido/daily_adventure/client/ && /home/troido/daily_adventure/client/daclient printinfo 2>&1 | /bin/grep -oP '(?<=\"Coins\", )\[[:digit:]]+'"
 #define MINERCOIN_CMD_PRE_USERNAME "/bin/grep -oP '(?<=\"~"
 #define MINERCOIN_CMD_POST_USERNAME "\": )[[:digit:]]+' /home/minerobber/Code/minerbot/minercoin.json"
 #define USERNAME_LENGTH_LIMIT 25
