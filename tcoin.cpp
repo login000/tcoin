@@ -547,7 +547,7 @@ bool user_has_initialised(const char* username)
 
   char *password_file_path = new char[strlen(username) + 42];
   std::strcpy(password_file_path, TCOIN_PASS_PATH);
-  std:;strcat(password_file_path, username);
+  std::strcat(password_file_path, username);
   std::strcat(password_file_path, "_password.txt");
 
   char *salt_file_path = new char[strlen(username) + 34];
