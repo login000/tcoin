@@ -15,6 +15,9 @@
 #include <ctime>
 #include <unistd.h>
 
+//set to 1 to enable some debug std::cout statements
+#define DEBUG 0
+
 #define TCOIN_PATH "/home/login/tcoin"
 #define TCOIN_MSG_PATH "/home/login/tcoin/messages/"
 #define TCOIN_SALT_PATH "/home/login/tcoin/salts/"
@@ -988,15 +991,19 @@ int send(const char* sender_username, const char* receiver_username, const long 
         {
           std::ifstream fin(program_sender_path.c_str());
           std::ifstream fin2(temp_program_sender_path.c_str());
-          std::cout << program_sender_path << "," << temp_program_sender_path << "," << !fin << "," << file_is_empty(fin) << "," << !fin2 << std::endl;
+          #if DEBUG
+            std::cout << program_sender_path << "," << temp_program_sender_path << "," << !fin << "," << file_is_empty(fin) << "," << !fin2 << std::endl;
+          #endif
           if((!fin || file_is_empty(fin)) && (!fin2))
           {
             fin.close();
             std::ofstream fout(program_sender_path.c_str(), std::fstream::trunc);
             fout << "0\n";
             fout.close();
-            char dummy;
-            std::cout << "Press enter to continue"; std::cin >> dummy;
+            #if DEBUG
+              char dummy;
+              std::cout << "Press enter to continue"; std::cin >> dummy;
+            #endif
           }
           else
             fin.close();
@@ -1271,15 +1278,14 @@ int send(const char* sender_username, const char* receiver_username, const long 
             }
             else if(return_value == 1)
             {
-              std::string program_sender_username = std::string(PROG_ACT_W_SLASH) + std::string(sender_username) + std::string("/") + std::string(receiver_username);
-              long long int amount_owed = get_file_value(program_sender_username.c_str());
-
+              long long int amount_owed = get_file_value(temp_program_sender_username.c_str());
+              long long int amount_to_aib = (long long int)(amount_to_send) - amount_owed;
               std::cout << "\nSorry, you only owe `" << receiver_username << "` ";
               cout_formatted_amount(amount_owed, " tildecoins", " tildecoin");
               std::cout << ", not ";
               cout_formatted_amount(amount_to_send, " tildecoins. ", " tildecoin. ");
               std::cout << "Please run `" << PCOIN_BIN_PATH_W_SPACE << "add_internal_balance " << receiver_username << " ";
-              cout_formatted_amount(amount_to_send);
+              cout_formatted_amount(amount_to_aib);
               std::cout << "` to sufficiently increase the amount owed to `" << receiver_username << "`.\n\n";
 
               final_return_value = 3; //we don't simply "return 3" here because we want temp_program_sender_path to get renamed again
