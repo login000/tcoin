@@ -1607,8 +1607,6 @@ int main(int argc, char *argv[])
 
   srand((long int)(std::time(NULL)) + strtol_fast(exec(BIN_ECHO_CMD).c_str()));
 
-  long long int user_amount = get_file_value(get_username().c_str());
-
   long long int total_amount = base_amount + user_amount;
 
   if(argc < 2)
