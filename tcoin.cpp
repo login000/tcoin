@@ -1516,8 +1516,6 @@ int main(int argc, char *argv[])
       //is the unit used throughout the program (and converted appropriately when displayed)
   }
 
-  user_amount = get_file_value(get_username().c_str());
-
   srand((long int)(std::time(NULL)) + strtol_fast(exec(BIN_ECHO_CMD).c_str()));
 
   if(argc > 1 && (!strcmp(argv[1], "--help") || !strcmp(argv[1], "help") || !strcmp(argv[1], "-h")))
@@ -1549,6 +1547,7 @@ int main(int argc, char *argv[])
     return 5;
   }
 
+  user_amount = get_file_value(get_username().c_str());
   long long int total_amount = base_amount + user_amount;
 
   if(argc < 2)
