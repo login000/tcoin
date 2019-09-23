@@ -491,7 +491,9 @@ void show_messages_tail(const char* username, int lineCount)
       continue; //we're counting cutting off a '\n ' (and '\n\n') as zero (and one) newline cut off because "<stuff>\n \_message>\n\n" is one message
     --newlineCount;
   }
-  std::cout << "Last " << lineCount << " Messages:\n\n";
+  std::cout << "Last " << lineCount << " Messages:\n";
+  if(*(start) != '\n') //if it starts with a newline, don't put another one
+    std::cout << "\n";
   std::vector<char>::iterator end = remove(start, buffer.end(), '\r');
   std::cout << std::string(start, end);
   if(*(end-2) != '\n') //if it ends with two newlines, don't put another one
