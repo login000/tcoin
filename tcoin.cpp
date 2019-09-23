@@ -690,7 +690,7 @@ int log_on(const char* username)
         std::string salt_logged_in_file = std::string(TCOIN_SALT_PATH) + std::string(username) + std::string("_salt_logged_in.txt");
         rename(salt_file.c_str(), salt_logged_in_file.c_str());
         remove(decrypted_password_file.c_str());
-        std::cout << "\nYou have now successfully logged on to tildecoin. Please be aware that any programs you run now can siphon funds from your account without your knowing until it's too late. Please run `tcoin off` before running any untrusted programs.\n\n";
+        std::cout << "\nYou have now successfully logged on to tildecoin (please run `tcoin` to check your balance and messages). Please be aware that any programs you run now can siphon funds from your account without your knowing until it's too late. Please run `tcoin off` before running any untrusted programs.\n\n";
       }
       else
       {
