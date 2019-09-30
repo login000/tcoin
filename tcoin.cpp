@@ -27,13 +27,24 @@
 #define TCOIN_BIN_PATH_W_SPACE "/home/login/bin/tcoin "
 #define TCOIN_PATH_W_SLASH "/home/login/tcoin/"
 #define TCOIN_SCRYPT_PATH "/home/login/bin/scrypt"
+
+#define KROWBAR_OFF
+#define DA_OFF
+#define MINERCOIN_OFF
+
 #define LS_HOME_CMD "/bin/ls /home"
 #define BIN_ECHO_CMD "/bin/echo $$"
-#define KROWBAR_SCORE_PATH "/home/krowbar/Code/irc/data/tildescores.txt"
+#ifndef KROWBAR_OFF
+  #define KROWBAR_SCORE_PATH "/home/krowbar/Code/irc/data/tildescores.txt"
+#endif
 #define WHOAMI_PATH "/usr/bin/whoami"
-#define TROIDO_DACOINS_CMD "cd /home/troido/daily_adventure/client/ && /home/troido/daily_adventure/client/daclient printinfo 2>&1 | /bin/grep -oP '(?<=\"Coins\", )[[:digit:]]+'"
-#define MINERCOIN_CMD_PRE_USERNAME "/bin/grep -oP '(?<=\"~"
-#define MINERCOIN_CMD_POST_USERNAME "\": )[[:digit:]]+' /home/minerobber/Code/minerbot/minercoin.json"
+#ifndef DA_OFF
+  #define TROIDO_DACOINS_CMD "cd /home/troido/daily_adventure/client/ && /home/troido/daily_adventure/client/daclient printinfo 2>&1 | /bin/grep -oP '(?<=\"Coins\", )[[:digit:]]+'"
+#endif
+#ifndef MINERCOIN_OFF
+  #define MINERCOIN_CMD_PRE_USERNAME "/bin/grep -oP '(?<=\"~"
+  #define MINERCOIN_CMD_POST_USERNAME "\": )[[:digit:]]+' /home/minerobber/Code/minerbot/minercoin.json"
+#endif
 #define USERNAME_LENGTH_LIMIT 25
 
 void exit_program(const int error_number)
@@ -1453,6 +1464,7 @@ int main(int argc, char *argv[])
   long long int unaltered_base_amount = base_amount;
 
   //adding tildebot scores from krowbar to base amount
+  #ifndef KROWBAR_OFF
   {
     std::string line;
     const std::string username = get_username();
@@ -1492,7 +1504,9 @@ int main(int argc, char *argv[])
       delete[] line_c_string;
     }
   }
+  #endif
 
+  #ifndef DA_OFF
   //adding daily-adventure scores from troido to base amount
   {
     std::string number_of_tildes = exec(TROIDO_DACOINS_CMD);
@@ -1504,7 +1518,9 @@ int main(int argc, char *argv[])
       //multiplied by 100 to convert tildecoins to centitildecoins, which
       //is the unit used throughout the program (and converted appropriately when displayed)
   }
+  #endif
 
+  #ifndef MINERCOIN_OFF
   //adding minercoin scores from minerobber to base amount
   {
     std::string command_to_exec = std::string(MINERCOIN_CMD_PRE_USERNAME) + get_username() + std::string(MINERCOIN_CMD_POST_USERNAME);
@@ -1517,7 +1533,7 @@ int main(int argc, char *argv[])
       //multiplied by 100 to convert tildecoins to centitildecoins, which
       //is the unit used throughout the program (and converted appropriately when displayed)
   }
-
+  #endif
   srand((long int)(std::time(NULL)) + strtol_fast(exec(BIN_ECHO_CMD).c_str()));
 
   if(argc > 1 && (!strcmp(argv[1], "--help") || !strcmp(argv[1], "help") || !strcmp(argv[1], "-h")))
