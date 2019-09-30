@@ -1,0 +1,150 @@
+#!/bin/bash
+
+if [ "$#" -eq 0 ] || [ "${@^}" = "--help" ] || [ "${@^}" = "-h" ]
+then
+  /bin/echo "Usage:"
+  /bin/echo "  ntcoin <path (no slash)> <n> : to create tcoin subdirectories in <path (no slash)> with <n> basecoins per user"
+  /bin/echo "  ntcoin [ --help | -h ] : to print this help"
+else
+  if [ -d "$1/tcoin" ]
+  then
+    /bin/echo "Sorry, '$1/tcoin' already exists."
+    exit 1
+  else
+    /bin/mkdir "$1/tcoin"
+    /bin/chmod 700 "$1/tcoin"
+  fi
+  if [ -d "$1/tcoin/salts" ]
+  then
+    /bin/echo "Sorry, '$1/tcoin/salts' already exists."
+    exit 1
+  else
+    /bin/mkdir "$1/tcoin/salts"
+    /bin/chmod 700 "$1/tcoin/salts"
+  fi
+  if [ -d "$1/tcoin/passwords" ]
+  then
+    /bin/echo "Sorry, '$1/tcoin/passwords' already exists."
+    exit 1
+  else
+    /bin/mkdir "$1/tcoin/passwords"
+    /bin/chmod 700 "$1/tcoin/passwords"
+  fi
+  if [ -d "$1/tcoin/program_accounting" ]
+  then
+    /bin/echo "Sorry, '$1/tcoin/program_accounting' already exists."
+    exit 1
+  else
+    /bin/mkdir "$1/tcoin/program_accounting"
+    /bin/chmod 700 "$1/tcoin/program_accounting"
+  fi
+  if [ -d "$1/tcoin/messages" ]
+  then
+    /bin/echo "Sorry, '$1/tcoin/messages' already exists."
+    exit 1
+  else
+    /bin/mkdir "$1/tcoin/messages"
+    /bin/chmod 700 "$1/tcoin/messages"
+  fi
+  if [ -d "$1/tcoin/base" ]
+  then
+    /bin/echo "Sorry, '$1/tcoin/base' already exists."
+    exit 1
+  else
+    /bin/mkdir "$1/tcoin/base"
+    /bin/chmod 700 "$1/tcoin/base"
+    if [ -e "$1/tcoin/base/base.txt" ]
+    then
+      /bin/echo "Sorry, '$1/tcoin/base/base.txt' already exists."
+      exit 1
+    else
+      /bin/echo "$2" > "./tcoin/$2.txt"
+      /bin/chmod 600 "$1/tcoin/base/base.txt"
+    fi
+  fi
+  if [ -d "$1/tcoin/secrets" ]
+  then
+    /bin/echo "Sorry, '$1/tcoin/secrets' already exists."
+    exit 1
+  else
+    /bin/mkdir "$1/tcoin/secrets"
+    /bin/chmod 700 "$1/tcoin/secrets"
+    if [ -e "$1/tcoin/secrets/pcoin_keys" ]
+    then
+      /bin/echo "Sorry, '$1/tcoin/secrets/pcoin_keys' already exists."
+      exit 1
+    else
+      /bin/echo "" > "$1/tcoin/secrets/pcoin_keys"
+      /bin/chmod 400 "$1/tcoin/secrets/pcoin_keys"
+    fi
+    if [ -e "$1/tcoin/secrets/tcoin_codez" ]
+    then
+      /bin/echo "Sorry, '$1/tcoin/secrets/tcoin_codez' already exists."
+      exit 1
+    else
+      /bin/echo "`cat /dev/urandom | base64 | head -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'` `cat /dev/urandom | base64 | head -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'`" > "$1/tcoin/secrets/tcoin_codez"
+      /bin/chmod 400 "$1/tcoin/secrets/tcoin_codez"
+    fi
+  fi
+    if [ -d "$1/tcoin/bin" ]
+  then
+    /bin/echo "Sorry, '$1/tcoin/bin' already exists."
+    exit 1
+  else
+    /bin/mkdir "$1/tcoin/bin"
+    /bin/chmod 700 "$1/tcoin/bin"
+    if [ -e "$1/tcoin/bin/scrypt" ]
+    then
+      /bin/echo "Sorry, '$1/tcoin/bin/scrypt' already exists."
+      exit 1
+    else
+      /bin/cp ./scrypt "$1/tcoin/bin/scrypt"
+      /bin/chmod 500 "$1/tcoin/bin/scrypt"
+    fi
+    if [ -e "$1/tcoin/bin/tcoin" ]
+    then
+      /bin/echo "Sorry, '$1/tcoin/bin/tcoin' already exists."
+      exit 1
+    else
+      /bin/echo '#!/bin/bash
+(/usr/bin/g++ '`/bin/pwd`'/tcoin.cpp -o "$1/tcoin/bin/tcoin" -std=c++11) \
+&& (/bin/chmod 550 "$1/tcoin/bin/tcoin") \
+&& (/bin/chmod u+s "$1/tcoin/bin/tcoin")' > "$1/tcoin/bin/compile_tcoin"
+      /bin/chmod 540 "$1/tcoin/bin/compile_tcoin"
+      /bin/echo '#!/bin/bash
+/bin/nano '`/bin/pwd`'/tcoin.cpp' > "$1/tcoin/bin/edit_tcoin"
+      /bin/chmod 540 "$1/tcoin/bin/edit_tcoin"
+      /bin/bash "$1/tcoin/bin/compile_tcoin"
+      /bin/ln -s "$1/tcoin/bin/tcoin" "$1/tcoin/bin/compile_tcoin" "$1/tcoin/bin/edit_tcoin" ~/bin
+    fi
+    if [ -e "$1/tcoin/bin/pcoin" ]
+    then
+      /bin/echo "Sorry, '$1/tcoin/bin/pcoin' already exists."
+      exit 1
+    else
+      /bin/echo '#!/bin/bash
+(/usr/bin/g++ '`/bin/pwd`'/pcoin.cpp -o "$1/tcoin/bin/pcoin" -std=c++11) \
+&& (/bin/chmod 550 "$1/tcoin/bin/pcoin") \
+&& (/bin/chmod u+s "$1/tcoin/bin/pcoin")' > "$1/tcoin/bin/compile_pcoin"
+      /bin/chmod 540 "$1/tcoin/bin/compile_pcoin"
+      /bin/echo '#!/bin/bash
+/bin/nano '`/bin/pwd`'/pcoin.cpp' > "$1/tcoin/bin/edit_pcoin"
+      /bin/chmod 540 "$1/tcoin/bin/edit_pcoin"
+      /bin/bash "$1/tcoin/bin/compile_pcoin"
+      /bin/ln -s "$1/tcoin/bin/pcoin" "$1/tcoin/bin/compile_pcoin" "$1/tcoin/bin/edit_pcoin" ~/bin
+    fi
+  fi
+  /bin/echo "Printing tcoin.cpp (and pcoin.cpp) preprocessor directives."
+  /bin/echo "Paste the following after the #includes inside tcoin.cpp (and pcoin.cpp):"
+  /bin/echo '#define TCOIN_PATH "$1/tcoin"
+#define TCOIN_MSG_PATH "$1/tcoin/messages/"
+#define TCOIN_SALT_PATH "$1/tcoin/salts/"
+#define TCOIN_PASS_PATH "$1/tcoin/passwords/"
+#define TCOIN_PROG_ACT_PATH "$1/tcoin/program_accounting/"
+#define PROG_ACT_W_SLASH "program_accounting/"
+#define PCOIN_KEY_PATH "$1/tcoin/secrets/pcoin_keys"
+#define TCOIN_CODEZ_PATH "$1/tcoin/secrets/tcoin_codez"
+#define TCOIN_BIN_PATH_W_SPACE "$1/tcoin/bin/tcoin "
+#define TCOIN_PATH_W_SLASH "$1/tcoin/"
+#define TCOIN_SCRYPT_PATH "$1/tcoin/bin/scrypt"'
+fi
