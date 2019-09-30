@@ -21,7 +21,9 @@ then
 #define TCOIN_CODEZ_PATH "'`/usr/bin/realpath -s $1`'/tcoin/secrets/tcoin_codez"
 #define TCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $1`'/tcoin/bin/tcoin "
 #define TCOIN_PATH_W_SLASH "'`/usr/bin/realpath -s $1`'/tcoin/"
-#define TCOIN_SCRYPT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/scrypt"'
+#define TCOIN_SCRYPT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/scrypt"
+#define PCOIN_BIN_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin"
+#define PCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin "'
 else
   if [ -d "`/usr/bin/realpath -s $1`/tcoin" ]
   then
@@ -172,5 +174,7 @@ else
 #define TCOIN_CODEZ_PATH "'`/usr/bin/realpath -s $1`'/tcoin/secrets/tcoin_codez"
 #define TCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $1`'/tcoin/bin/tcoin "
 #define TCOIN_PATH_W_SLASH "'`/usr/bin/realpath -s $1`'/tcoin/"
-#define TCOIN_SCRYPT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/scrypt"'
+#define TCOIN_SCRYPT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/scrypt"
+#define PCOIN_BIN_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin"
+#define PCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin "'
 fi
