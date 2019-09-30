@@ -22,11 +22,28 @@
 #define TCOIN_PASS_PATH "/home/login/tcoin/passwords/"
 #define TCOIN_PROG_ACT_PATH "/home/login/tcoin/program_accounting/"
 #define PROG_ACT_W_SLASH "program_accounting/"
+#define PCOIN_KEY_PATH "/home/login/tcoin/secrets/pcoin_keys"
+#define TCOIN_CODEZ_PATH "/home/login/tcoin/secrets/tcoin_codez"
+#define TCOIN_BIN_PATH_W_SPACE "/home/login/tcoin/bin/tcoin "
+#define TCOIN_PATH_W_SLASH "/home/login/tcoin/"
+#define TCOIN_SCRYPT_PATH "/home/login/tcoin/bin/scrypt"
+#define PCOIN_BIN_PATH "/home/login/tcoin/bin/pcoin"
+#define PCOIN_BIN_PATH_W_SPACE "/home/login/tcoin/bin/pcoin "
+
+/* OLD VALUES */
+/*
+#define TCOIN_PATH "/home/login/tcoin"
+#define TCOIN_MSG_PATH "/home/login/tcoin/messages/"
+#define TCOIN_SALT_PATH "/home/login/tcoin/salts/"
+#define TCOIN_PASS_PATH "/home/login/tcoin/passwords/"
+#define TCOIN_PROG_ACT_PATH "/home/login/tcoin/program_accounting/"
+#define PROG_ACT_W_SLASH "program_accounting/"
 #define PCOIN_KEY_PATH "/home/login/bin/pcoin_keys"
 #define TCOIN_CODEZ_PATH "/home/login/bin/tcoin_codez"
 #define TCOIN_BIN_PATH_W_SPACE "/home/login/bin/tcoin "
 #define TCOIN_PATH_W_SLASH "/home/login/tcoin/"
 #define TCOIN_SCRYPT_PATH "/home/login/bin/scrypt"
+*/
 
 #define KROWBAR_OFF
 #define DA_OFF
