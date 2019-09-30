@@ -1,10 +1,27 @@
 #!/bin/bash
 
-if [ "$#" -eq 0 ] || [ "${@^}" = "--help" ] || [ "${@^}" = "-h" ]
+if [ "$#" -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
   /bin/echo "Usage:"
   /bin/echo "  ntcoin <path (no slash)> <n> : to create tcoin subdirectories in <path (no slash)> with <n> basecoins per user"
+  /bin/echo "  ntcoin <path (no slash)> [ --def | -d ] : to print only the #define preprocessor directives without creating any directories"
   /bin/echo "  ntcoin [ --help | -h ] : to print this help"
+elif [ "$2" = "--def" ] || [ "$2" = "-d" ]
+then
+  /bin/echo "Printing tcoin.cpp (and pcoin.cpp) preprocessor directives."
+  /bin/echo "Paste the following after the #includes inside tcoin.cpp (and pcoin.cpp):
+"
+  /bin/echo '#define TCOIN_PATH "'`/usr/bin/realpath -s $1`'/tcoin"
+#define TCOIN_MSG_PATH "'`/usr/bin/realpath -s $1`'/tcoin/messages/"
+#define TCOIN_SALT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/salts/"
+#define TCOIN_PASS_PATH "'`/usr/bin/realpath -s $1`'/tcoin/passwords/"
+#define TCOIN_PROG_ACT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/program_accounting/"
+#define PROG_ACT_W_SLASH "program_accounting/"
+#define PCOIN_KEY_PATH "'`/usr/bin/realpath -s $1`'/tcoin/secrets/pcoin_keys"
+#define TCOIN_CODEZ_PATH "'`/usr/bin/realpath -s $1`'/tcoin/secrets/tcoin_codez"
+#define TCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $1`'/tcoin/bin/tcoin "
+#define TCOIN_PATH_W_SLASH "'`/usr/bin/realpath -s $1`'/tcoin/"
+#define TCOIN_SCRYPT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/scrypt"'
 else
   if [ -d "`/usr/bin/realpath -s $1`/tcoin" ]
   then
