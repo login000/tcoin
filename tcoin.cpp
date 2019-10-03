@@ -520,12 +520,17 @@ void show_messages_tail(const char* username, int lineCount)
     --newlineCount;
   }
   std::cout << "Last " << lineCount << " Messages:\n";
-  if(*(start) != '\n') //if it starts with a newline, don't put another one
-    std::cout << "\n";
   std::vector<char>::iterator end = remove(start, buffer.end(), '\r');
-  std::cout << std::string(start, end);
-  if(*(end-2) != '\n') //if it ends with two newlines, don't put another one
-    std::cout << "\n";
+  if((start == (end-1)) && (*(start) == '\n')) //there is only one character, and it is a newline (i.e.. no messages)
+    std::cout << "\nNo messages found.\n\n";
+  else
+  {
+    if(*(start) != '\n') //if it starts with a newline, don't put another one
+      std::cout << "\n";
+    std::cout << std::string(start, end);
+    if(*(end-2) != '\n' && *(end-1) == '\n') //if it ends with two newlines, don't put another one
+      std::cout << "\n";
+  }
 }
 
 bool program_exists(const char* username)
