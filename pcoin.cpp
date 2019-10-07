@@ -620,9 +620,9 @@ int send_message(const char* sender_username, const char* receiver_username, con
         fout << fin.rdbuf();
       fin.close();
 
-      time_t now = time(0);
-      char* dt = std::ctime(&now);
-      dt[strlen(dt)-1]='\0';
+      time_t now = std::time(NULL);
+      char dt[26];
+      std::strftime(dt, 26, "%a %b %_d %T %Y", std::gmtime(&now));
       char sender_formatted_string[26];
       char sender_arrow_formatted_string[47];
       char sender_arrow_string[47];
@@ -804,9 +804,8 @@ int send_message(const char* sender_username, const char* receiver_username, con
 
           fout << fin.rdbuf();
 
-          now = time(0);
-          dt = std::ctime(&now);
-          dt[strlen(dt)-1]='\0';
+          now = std::time(NULL);
+          std::strftime(dt, 26, "%a %b %_d %T %Y", std::gmtime(&now));
           char sender_formatted_string_right_aligned[26];
           char receiver_arrow_formatted_string[47];
           char receiver_arrow_string[47];
