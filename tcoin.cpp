@@ -33,10 +33,6 @@
 #define TCOIN_SCRYPT_PATH "/home/login/bin/scrypt"
 */
 
-#define KROWBAR_OFF
-#define DA_OFF
-#define MINERCOIN_OFF
-
 #define LS_HOME_CMD "/bin/ls /home"
 #define BIN_ECHO_CMD "/bin/echo $$"
 #ifndef KROWBAR_OFF
