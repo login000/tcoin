@@ -18,19 +18,7 @@
 //set to 1 to enable some debug std::cout statements
 #define DEBUG 0
 
-#define TCOIN_PATH "/home/login/tcoin"
-#define TCOIN_MSG_PATH "/home/login/tcoin/messages/"
-#define TCOIN_SALT_PATH "/home/login/tcoin/salts/"
-#define TCOIN_PASS_PATH "/home/login/tcoin/passwords/"
-#define TCOIN_PROG_ACT_PATH "/home/login/tcoin/program_accounting/"
-#define PROG_ACT_W_SLASH "program_accounting/"
-#define PCOIN_KEY_PATH "/home/login/tcoin/secrets/pcoin_keys"
-#define TCOIN_CODEZ_PATH "/home/login/tcoin/secrets/tcoin_codez"
-#define TCOIN_BIN_PATH_W_SPACE "/home/login/bin/tcoin "
-#define TCOIN_PATH_W_SLASH "/home/login/tcoin/"
-#define TCOIN_SCRYPT_PATH "/home/login/tcoin/bin/scrypt"
-#define PCOIN_BIN_PATH "/home/login/bin/pcoin"
-#define PCOIN_BIN_PATH_W_SPACE "/home/login/bin/pcoin "
+#include "pcoin_defs.cpp"
 
 /* OLD VALUES */
 /*

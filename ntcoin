@@ -9,8 +9,8 @@ then
 elif [ "$3" = "--def" ] || [ "$3" = "-d" ]
 then
   /bin/echo "Printing tcoin.cpp (and pcoin.cpp) preprocessor directives."
-  /bin/echo "Paste the following after the #includes inside tcoin.cpp (and pcoin.cpp):
-"
+  /bin/echo 'Paste the following in '`/usr/bin/realpath -s $2`'/tcoin/bin/tcoin_defs.cpp (and '`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin_defs.cpp):
+'
   /bin/echo '#define TCOIN_PATH "'`/usr/bin/realpath -s $1`'/tcoin"
 #define TCOIN_MSG_PATH "'`/usr/bin/realpath -s $1`'/tcoin/messages/"
 #define TCOIN_SALT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/salts/"
@@ -128,13 +128,53 @@ else
       /bin/cp ./scrypt "`/usr/bin/realpath -s $1`/tcoin/bin/scrypt"
       /bin/chmod 500 "`/usr/bin/realpath -s $1`/tcoin/bin/scrypt"
     fi
+    if [ -e "`/usr/bin/realpath -s $1`/tcoin/bin/tcoin_defs.cpp" ]
+    then
+      /bin/echo "Sorry, '`/usr/bin/realpath -s $1`/tcoin/bin/tcoin_defs.cpp' already exists."
+      exit 1
+    else
+      /bin/echo '#define TCOIN_PATH "'`/usr/bin/realpath -s $1`'/tcoin"
+#define TCOIN_MSG_PATH "'`/usr/bin/realpath -s $1`'/tcoin/messages/"
+#define TCOIN_SALT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/salts/"
+#define TCOIN_PASS_PATH "'`/usr/bin/realpath -s $1`'/tcoin/passwords/"
+#define TCOIN_PROG_ACT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/program_accounting/"
+#define PROG_ACT_W_SLASH "program_accounting/"
+#define PCOIN_KEY_PATH "'`/usr/bin/realpath -s $1`'/tcoin/secrets/pcoin_keys"
+#define TCOIN_CODEZ_PATH "'`/usr/bin/realpath -s $1`'/tcoin/secrets/tcoin_codez"
+#define TCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $2`'/tcoin "
+#define TCOIN_PATH_W_SLASH "'`/usr/bin/realpath -s $1`'/tcoin/"
+#define TCOIN_SCRYPT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/scrypt"
+#define PCOIN_BIN_PATH "'`/usr/bin/realpath -s $2`'/pcoin"
+#define PCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $2`'/pcoin "' > "`/usr/bin/realpath -s $1`/tcoin/bin/tcoin_defs.cpp"
+      /bin/chmod 640 "`/usr/bin/realpath -s $1`/tcoin/bin/tcoin_defs.cpp"
+    fi
+    if [ -e "`/usr/bin/realpath -s $1`/tcoin/bin/pcoin_defs.cpp" ]
+    then
+      /bin/echo "Sorry, '`/usr/bin/realpath -s $1`/tcoin/bin/pcoin_defs.cpp' already exists."
+      exit 1
+    else
+        /bin/echo '#define TCOIN_PATH "'`/usr/bin/realpath -s $1`'/tcoin"
+#define TCOIN_MSG_PATH "'`/usr/bin/realpath -s $1`'/tcoin/messages/"
+#define TCOIN_SALT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/salts/"
+#define TCOIN_PASS_PATH "'`/usr/bin/realpath -s $1`'/tcoin/passwords/"
+#define TCOIN_PROG_ACT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/program_accounting/"
+#define PROG_ACT_W_SLASH "program_accounting/"
+#define PCOIN_KEY_PATH "'`/usr/bin/realpath -s $1`'/tcoin/secrets/pcoin_keys"
+#define TCOIN_CODEZ_PATH "'`/usr/bin/realpath -s $1`'/tcoin/secrets/tcoin_codez"
+#define TCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $2`'/tcoin "
+#define TCOIN_PATH_W_SLASH "'`/usr/bin/realpath -s $1`'/tcoin/"
+#define TCOIN_SCRYPT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/scrypt"
+#define PCOIN_BIN_PATH "'`/usr/bin/realpath -s $2`'/pcoin"
+#define PCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $2`'/pcoin "' > "`/usr/bin/realpath -s $1`/tcoin/bin/pcoin_defs.cpp"
+      /bin/chmod 640 "`/usr/bin/realpath -s $1`/tcoin/bin/pcoin_defs.cpp"
+    fi
     if [ -e "`/usr/bin/realpath -s $1`/tcoin/bin/tcoin" ]
     then
       /bin/echo "Sorry, '`/usr/bin/realpath -s $1`/tcoin/bin/tcoin' already exists."
       exit 1
     else
       /bin/echo '#!/bin/bash
-(/usr/bin/g++ '`/bin/pwd`'/tcoin.cpp -o "'`/usr/bin/realpath -s $1`'/tcoin/bin/tcoin" -std=c++11) \
+(/usr/bin/g++ -I'`/usr/bin/realpath -s $1`'/tcoin/bin '`/bin/pwd`'/tcoin.cpp -o "'`/usr/bin/realpath -s $1`'/tcoin/bin/tcoin" -std=c++11) \
 && (/bin/chmod 550 "'`/usr/bin/realpath -s $1`'/tcoin/bin/tcoin") \
 && (/bin/chmod u+s "'`/usr/bin/realpath -s $1`'/tcoin/bin/tcoin") \
 && (/bin/chmod u+w "'`/usr/bin/realpath -s $2`'/tcoin") \
@@ -154,7 +194,7 @@ else
       exit 1
     else
       /bin/echo '#!/bin/bash
-(/usr/bin/g++ '`/bin/pwd`'/pcoin.cpp -o "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin" -std=c++11) \
+(/usr/bin/g++ -I'`/usr/bin/realpath -s $1`'/tcoin/bin '`/bin/pwd`'/pcoin.cpp -o "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin" -std=c++11) \
 && (/bin/chmod 550 "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin") \
 && (/bin/chmod u+s "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin")
 && (/bin/chmod u+w "'`/usr/bin/realpath -s $2`'/pcoin") \
@@ -169,20 +209,4 @@ else
       /bin/ln -s "`/usr/bin/realpath -s $1`/tcoin/bin/pcoin" "`/usr/bin/realpath -s $1`/tcoin/bin/compile_pcoin" "`/usr/bin/realpath -s $1`/tcoin/bin/edit_pcoin" ~/bin
     fi
   fi
-  /bin/echo "Printing tcoin.cpp (and pcoin.cpp) preprocessor directives."
-  /bin/echo "Paste the following after the #includes inside tcoin.cpp (and pcoin.cpp):
-"
-  /bin/echo '#define TCOIN_PATH "'`/usr/bin/realpath -s $1`'/tcoin"
-#define TCOIN_MSG_PATH "'`/usr/bin/realpath -s $1`'/tcoin/messages/"
-#define TCOIN_SALT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/salts/"
-#define TCOIN_PASS_PATH "'`/usr/bin/realpath -s $1`'/tcoin/passwords/"
-#define TCOIN_PROG_ACT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/program_accounting/"
-#define PROG_ACT_W_SLASH "program_accounting/"
-#define PCOIN_KEY_PATH "'`/usr/bin/realpath -s $1`'/tcoin/secrets/pcoin_keys"
-#define TCOIN_CODEZ_PATH "'`/usr/bin/realpath -s $1`'/tcoin/secrets/tcoin_codez"
-#define TCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $2`'/tcoin "
-#define TCOIN_PATH_W_SLASH "'`/usr/bin/realpath -s $1`'/tcoin/"
-#define TCOIN_SCRYPT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/scrypt"
-#define PCOIN_BIN_PATH "'`/usr/bin/realpath -s $2`'/pcoin"
-#define PCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $2`'/pcoin "'
 fi
