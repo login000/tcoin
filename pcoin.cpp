@@ -1608,7 +1608,7 @@ int main(int argc, char *argv[])
   }
   #endif
 
-  #ifndef DA_OFF
+  #ifndef MINERCOIN_OFF
   //adding minercoin scores from minerobber to base amount
   {
     std::string command_to_exec = std::string(MINERCOIN_CMD_PRE_USERNAME) + get_username() + std::string(MINERCOIN_CMD_POST_USERNAME);
