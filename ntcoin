@@ -147,8 +147,6 @@ else
 #define TCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $2`'/tcoin "
 #define TCOIN_PATH_W_SLASH "'`/usr/bin/realpath -s $1`'/tcoin/"
 #define TCOIN_SCRYPT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/scrypt"
-#define PCOIN_BIN_PATH "'`/usr/bin/realpath -s $2`'/pcoin"
-#define PCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $2`'/pcoin "
 #define KROWBAR_OFF
 #define DA_OFF
 #define MINERCOIN_OFF' > "`/usr/bin/realpath -s $1`/tcoin/bin/tcoin_defs.cpp"
@@ -167,7 +165,6 @@ else
 #define PROG_ACT_W_SLASH "program_accounting/"
 #define PCOIN_KEY_PATH "'`/usr/bin/realpath -s $1`'/tcoin/secrets/pcoin_keys"
 #define TCOIN_CODEZ_PATH "'`/usr/bin/realpath -s $1`'/tcoin/secrets/tcoin_codez"
-#define TCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $2`'/tcoin "
 #define TCOIN_PATH_W_SLASH "'`/usr/bin/realpath -s $1`'/tcoin/"
 #define TCOIN_SCRYPT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/scrypt"
 #define PCOIN_BIN_PATH "'`/usr/bin/realpath -s $2`'/pcoin"
