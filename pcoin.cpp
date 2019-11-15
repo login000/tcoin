@@ -539,7 +539,7 @@ bool files_are_same(const char* file_path1, const char* file_path2)
   //deemed the same.
 }
 
-int send_message(const char* sender_username, const char* receiver_username, const char* message, const long long int &amount_sent)
+int send_message(const char* sender_username, const char* receiver_username, const char* message, const long long int &amount_sent, const char* option)
 {
   std::string random_string = std::to_string(rand());
 
@@ -946,7 +946,15 @@ int send_message(const char* sender_username, const char* receiver_username, con
       break;
     }
   }
-
+  //finally, everything ran well and we can send the message to stdout if verbose is turned on
+  if(!strcmp(option, "verbose") && strcmp(message, "")) //message should not be empty
+  {
+    //since the message to stdout from send() ends with "\n\n", we have commented this below line out
+    //std::cout << "\n";
+    std::cout << "In addition, the transaction message \"" << message << "\" was ";
+    std::cout << "sent from `" << sender_username << "` to `" << receiver_username << "` successfully.";
+    std::cout << "\n\n";
+  }
   return 0;
 }
 
@@ -1336,8 +1344,8 @@ void help()
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "internal_balance <username>` or `" << PCOIN_BIN_PATH_W_SPACE << "-ib <username>`: print the amount you owe <username>";
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "add_internal_balance <username>` or `" << PCOIN_BIN_PATH_W_SPACE << "-aib <username> <amount>`: add <amount> to the amount you owe <username>";
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "send <username> <amount>` or `" << PCOIN_BIN_PATH_W_SPACE  << "-s <username> <amount>`: send <amount> tildecoins to <username>";
-  std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "send <username> <amount> [\"<message>\"]`: optionally, include a message to be sent to <username>";
-  std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "silentsend <username> <amount>`, `" << PCOIN_BIN_PATH_W_SPACE << "send -s <username> <amount>` or `" << PCOIN_BIN_PATH_W_SPACE << "-ss <username> <amount>`: send <amount> tildecoins to <username> without printing anything";
+  std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "send <username> <amount> \"<message>\"`: optionally, include a message to be sent to <username>";
+  std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "silentsend <username> <amount> [\"<message>\"]`, `" << PCOIN_BIN_PATH_W_SPACE << "send -s <username> <amount> [\"<message>\"]` or `" << PCOIN_BIN_PATH_W_SPACE << "-ss <username> <amount> [\"<message>\"]`: send <amount> tildecoins to <username> with an optional (as indicated by [ and ], which should not be included in the actual comment) message included without printing anything";
   std::cout << "\nIn the commands with `<username> <amount>`, switching the two arguments around (i.e., from `<username> <amount>` to `<amount> <username>`) will also work";
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "--help`, `" << PCOIN_BIN_PATH_W_SPACE << "help` or `" << PCOIN_BIN_PATH_W_SPACE << "-h`: print this help text";
   std::cout << "\nSend an email to `login@tilde.town` (tilde.town local email) or `login@tilde.team` (internet-wide email), or `/query login` on IRC to report any errors or request a key for your program.\n\n";
@@ -1745,10 +1753,20 @@ int main(int argc, char *argv[])
     if(argc == 5)
     {
       if(!strcmp(argv[2], "-s"))
+      {
+        int return_value;
         if(is_number(argv[3]))
-          send(get_username().c_str(), argv[4], strtol100(argv[3]), base_amount, "silent");
+          return_value = send(get_username().c_str(), argv[2], strtol100(argv[3]), base_amount, "silent");
         else
-          send(get_username().c_str(), argv[3], strtol100(argv[4]), base_amount, "silent");
+          return_value = send(get_username().c_str(), argv[3], strtol100(argv[2]), base_amount, "silent");
+        if(!return_value) //send was successful
+        {
+          if(is_number(argv[3]))
+            send_message(get_username().c_str(), argv[2], "", strtol100(argv[3]), "silent");
+          else
+            send_message(get_username().c_str(), argv[3], "", strtol100(argv[2]), "silent");
+        }
+      }
       else //argument count is 5 because a custom message was included
       {
         int return_value;
@@ -1758,10 +1776,30 @@ int main(int argc, char *argv[])
           return_value = send(get_username().c_str(), argv[3], strtol100(argv[2]), base_amount, "verbose");
 
         if(!return_value) //send was successful
+        {
           if(is_number(argv[3]))
-            send_message(get_username().c_str(), argv[2], argv[4], strtol100(argv[3]));
+            send_message(get_username().c_str(), argv[2], argv[4], strtol100(argv[3]), "verbose");
           else
-            send_message(get_username().c_str(), argv[3], argv[4], strtol100(argv[2]));
+            send_message(get_username().c_str(), argv[3], argv[4], strtol100(argv[2]), "verbose");
+        }
+      }
+    }
+    else if(argc == 6)
+    {
+      if(!strcmp(argv[2], "-s"))
+      { //argument count is 6 because of silent send with custom message included
+        int return_value;
+        if(is_number(argv[3]))
+          return_value = send(get_username().c_str(), argv[4], strtol100(argv[3]), base_amount, "silent");
+        else
+          return_value = send(get_username().c_str(), argv[3], strtol100(argv[4]), base_amount, "silent");
+        if(!return_value) //send was successful
+        {
+          if(is_number(argv[3]))
+            send_message(get_username().c_str(), argv[4], argv[5], strtol100(argv[3]), "silent");
+          else
+            send_message(get_username().c_str(), argv[3], argv[5], strtol100(argv[4]), "silent");
+        }
       }
     }
     else if(argc < 4)
@@ -1782,10 +1820,12 @@ int main(int argc, char *argv[])
       else
         return_value = send(get_username().c_str(), argv[2], strtol100(argv[3]), base_amount, "verbose");
       if(!return_value) //send was successful
+      {
         if(is_number(argv[2]))
-          send_message(get_username().c_str(), argv[3], "", strtol100(argv[2]));
+          send_message(get_username().c_str(), argv[3], "", strtol100(argv[2]), "verbose");
         else
-          send_message(get_username().c_str(), argv[2], "", strtol100(argv[3]));
+          send_message(get_username().c_str(), argv[2], "", strtol100(argv[3]), "verbose");
+      }
     }
   }
   else if(!strcmp(argv[1], "silentsend") || !strcmp(argv[1], "-ss"))
@@ -1799,9 +1839,9 @@ int main(int argc, char *argv[])
         return_value = send(get_username().c_str(), argv[3], strtol100(argv[2]), base_amount, "silent");
       if(!return_value) //send was successful
         if(is_number(argv[3]))
-          send_message(get_username().c_str(), argv[2], "", strtol100(argv[3]));
+          send_message(get_username().c_str(), argv[2], "", strtol100(argv[3]), "silent");
         else
-          send_message(get_username().c_str(), argv[3], "", strtol100(argv[2]));
+          send_message(get_username().c_str(), argv[3], "", strtol100(argv[2]), "silent");
     }
     else
       return 2;
