@@ -28,6 +28,11 @@ then
 #define DA_OFF
 #define MINERCOIN_OFF'
 else
+  #see https://stackoverflow.com/a/3951175
+  case $3 in
+    ''|*[!0-9]*) /bin/echo "Sorry, the number of basecoins <n> should be a positive integer."; exit 1 ;;
+    *) ;;
+  esac
   if [ -d "`/usr/bin/realpath -s $1`/tcoin" ]
   then
     /bin/echo "Sorry, '`/usr/bin/realpath -s $1`/tcoin' already exists."
