@@ -202,7 +202,7 @@ else
       /bin/echo '#!/bin/bash
 (/usr/bin/g++ -I"'`/usr/bin/realpath -s $1`'/tcoin/bin" "'`/bin/pwd`'/pcoin.cpp" -o "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin" -std=c++11) \
 && (/bin/chmod 550 "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin") \
-&& (/bin/chmod u+s "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin")
+&& (/bin/chmod u+s "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin") \
 && (/bin/chmod u+w "'`/usr/bin/realpath -s $2`'/pcoin") \
 && (/bin/cp "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin" "'`/usr/bin/realpath -s $2`'/pcoin") \
 && (/bin/chmod 550 "'`/usr/bin/realpath -s $2`'/pcoin") \
