@@ -810,21 +810,22 @@ int initialise_user(const char* username, const long long int &base_amount)
   if(flag_balance==true)
   {
     std::cout << "\nWelcome to tildecoin. ";
-    cout_formatted_amount(base_amount, " tildecoins have been added to your account.");
+    cout_formatted_amount(base_amount, " tildecoins have been added to your account.\n");
     if(flag_messages==false)
-      std::cout << "\nPlease execute `tcoin --help` for help or just `tcoin` for a status update.\n\n";
+      std::cout << "\nPlease execute `tcoin --help` for help or just `tcoin` for a status update.\n";
   }
   if(flag_messages==true)
   {
     std::cout << "\nYour tildecoin account is ready to send and receive messages!";
-    std::cout << "\nPlease execute `tcoin --help` for help or just `tcoin` for a status update.\n\n";
+    std::cout << "\nPlease execute `tcoin --help` for help or just `tcoin` for a status update.\n";
   }
   if(flag_password_and_salt==true)
   {
-      std::cout << "\nThe password-file generation process was completed successfully. Please run `tcoin on` to log on and `tcoin off` to log off. While logged on, be aware that any other programs you run can siphon funds from your account without your knowing until it's too late. Thus, please run `tcoin off` before running any untrusted programs.\n\n";
+      std::cout << "\nThe password-file generation process was completed successfully. Please run `tcoin on` to log on and `tcoin off` to log off. While logged on, be aware that any other programs you run can siphon funds from your account without your knowing until it's too late. Thus, please run `tcoin off` before running any untrusted programs.\n";
   }
   if(!flag_balance && !flag_messages && !flag_password_and_salt) //the account was initialised despite being already initialised and having all the required files intact.
-    std::cout << "\nYou took quite the chance initialising again. What if it nuked your balance, messages and passphrase?\n\n";
+    std::cout << "\nYou took quite the chance initialising again. What if it nuked your balance, messages and passphrase?\n";
+  std::cout << '\n';
   return 0;
 }
 
