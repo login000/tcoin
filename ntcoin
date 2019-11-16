@@ -197,7 +197,8 @@ else
 '`which nano`' "'`/bin/pwd`'/tcoin.cpp"' > "`/usr/bin/realpath -s $1`/tcoin/bin/edit_tcoin"
       /bin/chmod 540 "`/usr/bin/realpath -s $1`/tcoin/bin/edit_tcoin"
       /bin/bash "`/usr/bin/realpath -s $1`/tcoin/bin/compile_tcoin"
-      /bin/ln -s "`/usr/bin/realpath -s $1`/tcoin/bin/tcoin" "`/usr/bin/realpath -s $1`/tcoin/bin/compile_tcoin" "`/usr/bin/realpath -s $1`/tcoin/bin/edit_tcoin" ~/bin
+      /bin/ln -s "`/usr/bin/realpath -s $1`/tcoin/bin/compile_tcoin" ~/"bin/compile_tcoin"
+      /bin/ln -s "`/usr/bin/realpath -s $1`/tcoin/bin/edit_tcoin" ~/"bin/edit_tcoin"
     fi
     if [ -e "`/usr/bin/realpath -s $1`/tcoin/bin/pcoin" ]
     then
@@ -217,7 +218,8 @@ else
 '`which nano`' "'`/bin/pwd`'/pcoin.cpp"' > "`/usr/bin/realpath -s $1`/tcoin/bin/edit_pcoin"
       /bin/chmod 540 "`/usr/bin/realpath -s $1`/tcoin/bin/edit_pcoin"
       /bin/bash "`/usr/bin/realpath -s $1`/tcoin/bin/compile_pcoin"
-      /bin/ln -s "`/usr/bin/realpath -s $1`/tcoin/bin/pcoin" "`/usr/bin/realpath -s $1`/tcoin/bin/compile_pcoin" "`/usr/bin/realpath -s $1`/tcoin/bin/edit_pcoin" ~/bin
+      /bin/ln -s "`/usr/bin/realpath -s $1`/tcoin/bin/compile_pcoin" ~/"bin/compile_pcoin"
+      /bin/ln -s "`/usr/bin/realpath -s $1`/tcoin/bin/edit_pcoin" ~/"bin/edit_pcoin"
     fi
   fi
 fi
