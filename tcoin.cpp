@@ -810,7 +810,7 @@ int initialise_user(const char* username, const long long int &base_amount)
   if(flag_balance==true)
   {
     std::cout << "\nWelcome to tildecoin. ";
-    cout_formatted_amount(base_amount, " tildecoins have been added to your account.");
+    cout_formatted_amount(base_amount, " tildecoins have been added to your account.\n");
     if(flag_messages==false)
       std::cout << "\nPlease execute `tcoin --help` for help or just `tcoin` for a status update.\n";
   }
