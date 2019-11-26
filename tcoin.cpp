@@ -467,9 +467,49 @@ void show_messages(const char* username)
 {
   std::string messages_path = std::string(TCOIN_MSG_PATH) + std::string(username) + std::string("_messages.txt");
   std::ifstream fin(messages_path.c_str());
-  std::cout << "Messages:\n\n";
-  std::cout << fin.rdbuf();
-  std::cout << "\n";
+  std::cout << "Messages:\n";
+  char ch;
+  bool first_char_is_newline = false;
+  bool reached_eof = false;
+  for(int i=0; i < 2; ++i)
+  {
+    if(ch = fin.get())
+    {
+      if(ch == std::istream::traits_type::eof()) //https://stackoverflow.com/questions/4533063/how-does-ifstreams-eof-work
+      {
+        if(first_char_is_newline && i==1)
+        {
+          reached_eof = true;
+          std::cout << "No messages found.\n";
+        }
+        break;
+      }
+      else
+      {
+        if(i==0 && ch=='\n')
+        {
+          first_char_is_newline = true;
+        }
+        std::cout << ch;
+      }
+    }
+  }
+  if(!reached_eof)
+  {
+    std::cout << fin.rdbuf();
+  }
+
+  //removing eofbit
+  fin.clear();
+  //moving back two places from the end to read the last two characters
+  fin.seekg(-2, std::ios::end);
+  char chs[2]; //chs = characters
+  chs[0] = fin.get();
+  chs[1] = fin.get();
+  fin.get(); //to set eofbit again because I like it to be just the way it was before removing the eofbit
+  if(chs[0]!='\n' && chs[1]=='\n') //if only one newline at the end of the file
+    std::cout << "\n"; //print another one
+
   fin.close();
 }
 
