@@ -393,7 +393,7 @@ void show_balance(char const* username, const long long int &amount, const long 
 
   show_breakdown(amount0, amount0_source, amount1, amount1_source, amount2, amount2_source, amount3, amount3_source, amount4, amount4_source);
 
-  std::cout << "\nThe command to send tildecoins to other users is `tcoin send <username> <amount>` or `tcoin -s <username> <amount>`";
+  std::cout << "\nThe command to send tildecoins to other users is `tcoin send <username> <amount>` or `tcoin -s <username> <amount>`.";
   std::cout << "\nThe command to log out of tildecoin is `tcoin off`.\n\n";
 }
 
