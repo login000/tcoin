@@ -214,7 +214,7 @@ else
 && (/bin/cp "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin" "'`/usr/bin/realpath -s $2`'/pcoin") \
 && (/bin/chmod 550 "'`/usr/bin/realpath -s $2`'/pcoin") \
 && (/bin/chmod u+s "'`/usr/bin/realpath -s $2`'/pcoin") \
-&& (/bin/cp "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin_defs.cpp'" "'`/usr/bin/realpath -s $2`'/pcoin_defs.cpp'")'' > "`/usr/bin/realpath -s $1`/tcoin/bin/compile_pcoin"
+&& (/bin/cp "'`/usr/bin/realpath -s $1`'/tcoin/bin/pcoin_defs.cpp'" "'`/usr/bin/realpath -s $2`'/pcoin_defs.cpp'")' > "`/usr/bin/realpath -s $1`/tcoin/bin/compile_pcoin"
       /bin/chmod 540 "`/usr/bin/realpath -s $1`/tcoin/bin/compile_pcoin"
       /bin/echo '#!/bin/bash
 '`which nano`' "'`/bin/pwd`'/pcoin.cpp"' > "`/usr/bin/realpath -s $1`/tcoin/bin/edit_pcoin"
