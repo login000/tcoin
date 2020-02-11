@@ -3,7 +3,7 @@
 if [ "$#" -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
   /bin/echo "Usage:"
-  /bin/echo "  ntcoin <path (no slash)> <bin path (no slash)> <n> : to create tcoin subdirectories in <path (no slash)> with the executable saved to <bin path (no slash)> and with <n> basecoins per user"
+  /bin/echo "  ntcoin <path (no slash)> <bin path (no slash)> <n> : to create the tcoin directory in <path (no slash)> with the executable saved to <bin path (no slash)> and with <n> basecoins per user"
   /bin/echo "  ntcoin <path (no slash)> <bin path (no slash)> [ --def | -d ]: to print only the #define preprocessor directives without creating any directories"
   /bin/echo "  ntcoin [ --help | -h ] : to print this help"
 elif [ "$3" = "--def" ] || [ "$3" = "-d" ]
