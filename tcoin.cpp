@@ -1723,7 +1723,7 @@ int main(int argc, char *argv[])
         return_value = message_is_long(argv[4]);
         if(return_value) //message is too long
         {
-          std::cout << "\nSorry, the message was longer than " << TCOIN_MSG_LENGTH_LIMIT << " characters. Please keep messages at or below this limit.n\n";
+          std::cout << "\nSorry, the message was longer than " << TCOIN_MSG_LENGTH_LIMIT << " characters. Please keep messages at or below this limit.\n\n";
           return ERR_MAIN_MSG_TOO_LONG;
         }
         if(is_number(argv[2]))
@@ -1747,7 +1747,7 @@ int main(int argc, char *argv[])
         return_value = message_is_long(argv[5]);
         if(return_value) //message is too long
         {
-          std::cout << "\nSorry, the message was longer than " << TCOIN_MSG_LENGTH_LIMIT << " characters. Please keep messages at or below this limit.n\n";
+          std::cout << "\nSorry, the message was longer than " << TCOIN_MSG_LENGTH_LIMIT << " characters. Please keep messages at or below this limit.\n\n";
           return ERR_MAIN_MSG_TOO_LONG;
         }
         if(is_number(argv[3]))
@@ -1812,7 +1812,7 @@ int main(int argc, char *argv[])
       return_value = message_is_long(argv[4]);
       if(return_value) //message is too long
       {
-        std::cout << "\nSorry, the message was longer than " << TCOIN_MSG_LENGTH_LIMIT << " characters. Please keep messages at or below this limit.n\n";
+        std::cout << "\nSorry, the message was longer than " << TCOIN_MSG_LENGTH_LIMIT << " characters. Please keep messages at or below this limit.\n\n";
         return ERR_MAIN_MSG_TOO_LONG;
       }
       if(is_number(argv[2]))
