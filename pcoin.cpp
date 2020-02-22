@@ -70,6 +70,12 @@
 #define ERR_ADD_FILE_VALUE_INSUFFICIENT_FUNDS 1
 #define ERR_ADD_FILE_VALUE_FATAL 999
 #define ERR_IN_GET_INTERNAL_TOTAL_OWED_SELF_PROGRAM_DOESNT_EXIST -1
+#define ERR_GET_FILE_VALUE_COULDNT_OPEN_BASEFILE 1
+#define ERR_ADD_FILE_VALUE_COULDNT_OPEN_BASEFILE 1
+#define ERR_SEND_MESSAGE_RECEIVER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL 101
+#define ERR_SEND_MESSAGE_PROGRAM_RECEIVER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL 103
+#define ERR_SEND_MESSAGE_SENDER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL 102
+#define ERR_SEND_MESSAGE_SENDER_PROGRAM_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL 104
 
 #define ERR_KEY_NOT_IN_USE 9
 #define ERR_NO_ARGS 8
@@ -229,7 +235,7 @@ long long int get_file_value(const char* file_name)
     if(!strcmp(file_name, "base/base"))
     {
       std::cerr << "\nError! Could not open file at " << file_path << "!\n\n";
-      exit_program(1);
+      exit_program(ERR_GET_FILE_VALUE_COULDNT_OPEN_BASEFILE);
     }
     else {
       std::cerr << "\nError! Could not open file at " << file_path << "! Assuming its internal content is \"0\\n\".\n\n";
@@ -265,7 +271,7 @@ int add_file_value(const char* file_name, const long long int &value_to_add, con
       file.close();
       delete[] file_path;
       delete[] temp_file_path;
-      exit_program(1);
+      exit_program(ERR_ADD_FILE_VALUE_COULDNT_OPEN_BASEFILE);
     }
   }
 
@@ -721,8 +727,8 @@ int send_message(const char* sender_username, const char* receiver_username, con
 
       if(!fout) //error
       {
-        std::cerr << "Fatal error 101: the receiver message file was unable to be updated. Please contact login@tilde.town (town-only) or login@tilde.team (internet-wide to report this error (because it requires manual recovery).";
-        exit_program(101);
+        std::cerr << "Fatal error " << ERR_SEND_MESSAGE_RECEIVER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL << ": the receiver message file was unable to be updated. Please contact login@tilde.town (town-only) or login@tilde.team (internet-wide to report this error (because it requires manual recovery).";
+        exit_program(ERR_SEND_MESSAGE_RECEIVER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL);
       }
       else
       {
@@ -810,8 +816,8 @@ int send_message(const char* sender_username, const char* receiver_username, con
 
             if(!fout) //error
             {
-              std::cerr << "Fatal error 103: the receiver program_message file was unable to be updated. Please contact login@tilde.town (town-only) or login@tilde.team (internet-wide to report this error (because it requires manual recovery).";
-              exit_program(103);
+              std::cerr << "Fatal error " << ERR_SEND_MESSAGE_PROGRAM_RECEIVER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL << ": the receiver program_message file was unable to be updated. Please contact login@tilde.town (town-only) or login@tilde.team (internet-wide to report this error (because it requires manual recovery).";
+              exit_program(ERR_SEND_MESSAGE_PROGRAM_RECEIVER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL);
             }
             else
             {
@@ -905,8 +911,8 @@ int send_message(const char* sender_username, const char* receiver_username, con
 
           if(!fout) //error
           {
-            std::cerr << "Fatal error 102: the sender message file was unable to be updated. Please contact login@tilde.town (town-only) or login@tilde.team (internet-wide to report this error (because it requires manual recovery).";
-            exit_program(102);
+            std::cerr << "Fatal error " << ERR_SEND_MESSAGE_SENDER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL << ": the sender message file was unable to be updated. Please contact login@tilde.town (town-only) or login@tilde.team (internet-wide to report this error (because it requires manual recovery).";
+            exit_program(ERR_SEND_MESSAGE_SENDER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL);
           }
           else
           {
@@ -991,8 +997,8 @@ int send_message(const char* sender_username, const char* receiver_username, con
 
                 if(!fout) //error
                 {
-                  std::cerr << "Fatal error 104: the sender program message file was unable to be updated. Please contact login@tilde.town (town-only) or login@tilde.team (internet-wide to report this error (because it requires manual recovery).";
-                  exit_program(104);
+                  std::cerr << "Fatal error " << ERR_SEND_MESSAGE_SENDER_PROGRAM_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL << ": the sender program message file was unable to be updated. Please contact login@tilde.town (town-only) or login@tilde.team (internet-wide to report this error (because it requires manual recovery).";
+                  exit_program(ERR_SEND_MESSAGE_SENDER_PROGRAM_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL);
                 }
                 else
                 {
