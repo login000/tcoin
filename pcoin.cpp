@@ -52,7 +52,7 @@
   #define MINERCOIN_CMD_POST_USERNAME "\": )[[:digit:]]+' /home/minerobber/Code/minerbot/minercoin.json"
 #endif
 #define USERNAME_LENGTH_LIMIT 25
-#define TCOIN_MSG_LENGTH 280
+#define TCOIN_MSG_LENGTH_LIMIT 280
 
 #define ERR_MAIN_SEND_TOO_FEW_ARGS 6
 #define ERR_MAIN_SEND_TOO_MANY_ARGS 7
