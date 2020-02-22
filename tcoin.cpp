@@ -48,6 +48,25 @@
 #endif
 #define USERNAME_LENGTH_LIMIT 25
 
+#define ERR_NO_INIT 4
+#define ERR_ALREADY_ON 40
+#define ERR_NO_PWD_FILE 10
+#define ERR_WRONG_PWD 20
+#define ERR_WRONG_PWD2 30
+#define ERR_ALREADY_OFF 20
+#define ERR_DAMAGED_SALT_FILE 40
+#define ERR_2_SALT_FILES 60
+#define ERR_NOT_LOGGED_IN 5
+#define ERR_MAIN_SEND_TOO_FEW_ARGS 6
+#define ERR_MAIN_SEND_TOO_MANY_ARGS 7
+#define ERR_SILENTSEND 2
+#define ERR_UNKNOWN_ARG 3
+#define ERR_TCOIN_TO_SELF 5
+#define ERR_RECEIVER_BLOCKED 4
+#define ERR_NEGATIVE_SEND_AMOUNT 2
+#define ERR_INSUFFICIENT_FUNDS 3
+#define ERR_RECEIVER_NOT_FOUND 1
+
 void exit_program(const int error_number)
 {
   // Cleanup to do before exiting the program
@@ -650,7 +669,7 @@ int log_off(const char* username)
   if(!fin) //user is not currently logged in
   {
     std::cout << "\nSorry, you're already logged out. Thanks for being extra careful about being logged out before running untrusted programs (if you were going to do that).\n\n";
-    return 1;
+    return ERR_ALREADY_OFF;
   }
   else //user is logged in
   {
@@ -659,7 +678,7 @@ int log_off(const char* username)
       remove(salt_logged_in_file.c_str());
       remove(salt_file.c_str());
       std::cout << "\nSorry, your salt file is damaged. You will have to run `tcoin init` and create a new passphrase.\n\n";
-      return 2;
+      return ERR_DAMAGED_SALT_FILE;
     }
     else //user is logged in and salt_logged_in_file is not empty
     {
@@ -677,7 +696,7 @@ int log_off(const char* username)
       {
         fin2.close();
         std::cout << "\nSorry, there's something seriously wrong with your salt files. You'll have to run `tcoin init` and create a new passphrase.\n\n";
-        return 3;
+        return ERR_2_SALT_FILES;
       }
     }
   }
@@ -708,7 +727,7 @@ int log_on(const char* username)
   if(is_logged_on(username))
   {
     std::cout << "\nYou're already logged in. Please type `tcoin` to see your messages and balance.\n\n";
-    return 4;
+    return ERR_ALREADY_ON;
   }
   std::string salt_file = std::string(TCOIN_SALT_PATH) + std::string(username) + std::string("_salt.txt");
   std::string decrypted_password_file = std::string(TCOIN_PASS_PATH) + std::string(username) + std::string("_decrypted_password.txt");
@@ -718,7 +737,7 @@ int log_on(const char* username)
   if(!fin || (fin && file_is_empty(fin)))
   {
     std::cout << "\nSorry, your password file could not be opened. You will have to create a new passphrase by running `tcoin init`.\n\n";
-    return 1;
+    return ERR_NO_PWD_FILE;
   }
   else
   {
@@ -738,7 +757,7 @@ int log_on(const char* username)
         remove(decrypted_password_file.c_str());
       fin.close();
       std::cout << "\nSorry, the passphrase you entered could not decrypt the encrypted password file. You are not logged on. Please run `tcoin on` to try again.\n\n";
-      return 2;
+      return ERR_WRONG_PWD;
     }
     else
     {
@@ -754,7 +773,7 @@ int log_on(const char* username)
         remove(decrypted_password_file.c_str());
         fin.close();
         std::cout << "\nSorry, the decrypted password file did not match the salt file. You are not logged on. Please run `tcoin on` to try again.\n\n";
-        return 3;
+        return ERR_WRONG_PWD2;
       }
     }
   }
@@ -1217,19 +1236,19 @@ int send(const char* sender_username, const char* receiver_username, const long 
     if(!strcmp(sender_username, receiver_username))
     {
       std::cout << "\nSorry, you cannot send tildecoins to yourself.\n\n";
-      return 5;
+      return ERR_TCOIN_TO_SELF;
     }
     if(user_is_locked(receiver_username))
     {
       if(!strcmp(option, "verbose"))
         std::cout << "\nSorry, `" << receiver_username << "` does not wish to receive any tildecoins at this time.\n\n";
-      return 4;
+      return ERR_RECEIVER_BLOCKED;
     }
     if(amount_to_send <= 0)
     {
       if(!strcmp(option, "verbose"))
         std::cout << "\nSorry, that amount is not valid. The amount should be a positive decimal number when truncated to two decimal places.\n\n";
-      return 2;
+      return ERR_NEGATIVE_SEND_AMOUNT;
     }
     else
     {
@@ -1256,6 +1275,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
         if(!std::rename(sender_path, temp_sender_path))
         {
           //Insufficient funds check is in add_file_value()
+          //Returns 1 if insufficient funds, otherwise returns 0
           return_value = add_file_value(temp_sender_username, -1 * amount_to_send, base_amount);
 
           if(return_value == 0) // Funds sucessfully deducted from sender_username
@@ -1428,7 +1448,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
               std::cout << "Your current balance is ";
               cout_formatted_amount(amount_of_funds, " tildecoins.\n\n", " tildecoin.\n\n");
             }
-            final_return_value = 3; //we don't simply "return 3" here because we want temp_sender_path to get renamed again
+            final_return_value = ERR_INSUFFICIENT_FUNDS; //we don't simply "return 3" here because we want temp_sender_path to get renamed again
           }
 
           while(1)
@@ -1449,7 +1469,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
   {
     if(!strcmp(option, "verbose"))
       std::cout << "\nSorry, no user with the username `" << receiver_username << "` was found.\n\n";
-    return 1;
+    return ERR_RECEIVER_NOT_FOUND;
   }
 
   return final_return_value;
@@ -1605,20 +1625,20 @@ int main(int argc, char *argv[])
   if(!user_has_initialised(get_username().c_str()))
   {
     std::cout << "\nSorry, tcoin has not been initialised. Please execute `tcoin init` to complete initialisation or `tcoin help` for help.\n\n";
-    return 4;
+    return ERR_NO_INIT;
   }
   if(argc > 1 && !strcmp(argv[1], "on"))
   {
-    return 10*log_on(get_username().c_str());
+    return log_on(get_username().c_str()); //return codes are inside the log_on function
   }
   if(argc > 1 && !strcmp(argv[1], "off"))
   {
-    return 20*log_off(get_username().c_str());
+    return log_off(get_username().c_str()); //return codes are inside the log_off function
   }
   if(!is_logged_on(get_username().c_str()))
   {
     std::cout << "\nSorry, you have not logged on to tildecoin yet. Please execute `tcoin on` to log in or `tcoin help` for help.\n\n";
-    return 5;
+    return ERR_NOT_LOGGED_IN;
   }
 
   user_amount = get_file_value(get_username().c_str());
@@ -1709,12 +1729,12 @@ int main(int argc, char *argv[])
     else if(argc < 4)
     {
       std::cout << "\nSorry, too few command-line arguments were passed. The correct format is `tcoin send <username> <amount>`.\n\n";
-      return 6;
+      return ERR_MAIN_SEND_TOO_FEW_ARGS;
     }
     else if(argc > 4)
     {
       std::cout << "\nSorry, too many command-line arguments were passed. The correct format is `tcoin send <username> <amount>`.\n\n";
-      return 7;
+      return ERR_MAIN_SEND_TOO_MANY_ARGS;
     }
     else
     {
@@ -1765,12 +1785,12 @@ int main(int argc, char *argv[])
       }
     }
     else
-      return 2;
+      return ERR_SILENTSEND;
   }
   else
   {
     std::cout << "\nSorry, an unknown command-line argument was received. `tcoin help` will print the help text.\n\n";
-    return 3;
+    return ERR_UNKNOWN_ARG;
   }
 
   return 0;

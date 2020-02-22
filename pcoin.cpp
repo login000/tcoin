@@ -53,6 +53,36 @@
 #endif
 #define USERNAME_LENGTH_LIMIT 25
 
+#define ERR_MAIN_SEND_TOO_FEW_ARGS 6
+#define ERR_MAIN_SEND_TOO_MANY_ARGS 7
+#define ERR_SILENTSEND 2
+#define ERR_UNKNOWN_ARG 3
+#define ERR_TCOIN_TO_SELF 5
+#define ERR_RECEIVER_BLOCKED 4
+#define ERR_NEGATIVE_SEND_AMOUNT 2
+#define ERR_INSUFFICIENT_FUNDS 3
+#define ERR_RECEIVER_NOT_FOUND 1
+
+#define ERR_IN_GET_INTERNAL_BALANCE -1
+#define ERR_IN_ADD_INTERNAL_BALANCE_GET_INTERNAL_TOTAL_OWED_FAILED -3
+#define ERR_ADD_INTERNAL_BALANCE_VALUE_TO_ADD_UNFULFILLABLE_USING_OWN_CURRENT_FUNDS -1
+#define ERR_ADD_INTERNAL_BALANCE_USERNAME_DOESNT_EXIST -2
+#define ERR_ADD_FILE_VALUE_INSUFFICIENT_FUNDS 1
+#define ERR_ADD_FILE_VALUE_FATAL 999
+#define ERR_IN_GET_INTERNAL_TOTAL_OWED_SELF_PROGRAM_DOESNT_EXIST -1
+
+#define ERR_KEY_NOT_IN_USE 9
+#define ERR_NO_ARGS 8
+#define ERR_IN_MAIN_GET_INTERNAL_TOTAL_OWED_FAILED 18
+#define ERR_INTERNAL_BALANCE_USERNAME_NOT_FOUND 17
+#define ERR_INTERNAL_BALANCE_NO_USERNAME_SUPPLIED 10
+#define ERR_INTERNAL_BALANCE_TOO_MANY_ARGS 11
+#define ERR_ADD_INTERNAL_BALANCE_TOO_FEW_ARGS 12
+#define ERR_ADD_INTERNAL_BALANCE_TOO_MANY_ARGS 13
+#define ERR_IN_MAIN_ADD_INTERNAL_BALANCE_AMOUNT_LARGER_THAN_COVERABLE_BY_UNOWED_BALANCE 14
+#define ERR_IN_MAIN_ADD_INTERNAL_BALANCE_AMOUNT_MAKING_USER_INTERNAL_BALANCE_NEGATIVE 16
+#define ERR_IN_MAIN_ADD_INTERNAL_BALANCE_NO_SUCH_USERNAME_FOUND 15
+
 void exit_program(const int error_number)
 {
   // Cleanup to do before exiting the program
@@ -250,7 +280,7 @@ int add_file_value(const char* file_name, const long long int &value_to_add, con
     file.close();
     delete[] file_path;
     delete[] temp_file_path;
-    return 1;
+    return ERR_ADD_FILE_VALUE_INSUFFICIENT_FUNDS;
   }
 
   long long int new_value = old_value + value_to_add;
@@ -267,8 +297,8 @@ int add_file_value(const char* file_name, const long long int &value_to_add, con
 
   if(!file2) //error
   {
-    std::cerr << "Fatal error 999: the file \"" << file_name << "\" was unable to be updated. Please contact login@tilde.town (town-only) or login@tilde.team (internet-wide to report this error (because it requires manual recovery).";
-    exit_program(999);
+    std::cerr << "Fatal error " << ERR_ADD_FILE_VALUE_FATAL << ": the file \"" << file_name << "\" was unable to be updated. Please contact login@tilde.town (town-only) or login@tilde.team (internet-wide to report this error (because it requires manual recovery).";
+    exit_program(ERR_ADD_FILE_VALUE_FATAL);
   }
   else
   {
@@ -1025,19 +1055,19 @@ int send(const char* sender_username, const char* receiver_username, const long 
     if(!strcmp(sender_username, receiver_username))
     {
       std::cout << "\nSorry, you cannot send tildecoins to yourself.\n\n";
-      return 5;
+      return ERR_TCOIN_TO_SELF;
     }
     if(user_is_locked(receiver_username))
     {
       if(!strcmp(option, "verbose"))
         std::cout << "\nSorry, `" << receiver_username << "` does not wish to receive any tildecoins at this time.\n\n";
-      return 4;
+      return ERR_RECEIVER_BLOCKED;
     }
     if(amount_to_send <= 0)
     {
       if(!strcmp(option, "verbose"))
         std::cout << "\nSorry, that amount is not valid. The amount should be a positive decimal number when truncated to two decimal places.\n\n";
-      return 2;
+      return ERR_NEGATIVE_SEND_AMOUNT;
     }
     else
     {
@@ -1320,7 +1350,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
                           std::cout << "Your current balance is ";
                           cout_formatted_amount(amount_of_funds, " tildecoins.\n\n", " tildecoin.\n\n");
                         }
-                        final_return_value = 3; //we don't simply "return 3" here because we want temp_sender_path to get renamed again
+                        final_return_value = ERR_INSUFFICIENT_FUNDS; //we don't simply "return 3" here because we want temp_sender_path to get renamed again
                       }
 
                       while(1)
@@ -1357,7 +1387,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
               cout_formatted_amount(amount_to_aib);
               std::cout << "` to sufficiently increase the amount owed to `" << receiver_username << "`.\n\n";
 
-              final_return_value = 3; //we don't simply "return 3" here because we want temp_program_sender_path to get renamed again
+              final_return_value = ERR_INSUFFICIENT_FUNDS; //we don't simply "return 3" here because we want temp_program_sender_path to get renamed again
             }
 
             while(1)
@@ -1375,7 +1405,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
   {
     if(!strcmp(option, "verbose"))
       std::cout << "\nSorry, no user with the username `" << receiver_username << "` was found.\n\n";
-    return 1;
+    return ERR_RECEIVER_NOT_FOUND;
   }
 
   return final_return_value;
@@ -1455,7 +1485,7 @@ long long int get_internal_balance(const char* username)
     std::string internal_username = std::string(PROG_ACT_W_SLASH) + get_username() + std::string("/") + std::string(username);
     return get_file_value(internal_username.c_str());
   }
-  return -1;
+  return ERR_IN_GET_INTERNAL_BALANCE;
 }
 
 long long int get_internal_total_owed()
@@ -1481,7 +1511,7 @@ long long int get_internal_total_owed()
     std::string internal_total_username = std::string(PROG_ACT_W_SLASH) + get_username() + std::string("/_TOTAL");
     return get_file_value(internal_total_username.c_str());
   }
-  return -1;
+  return ERR_IN_GET_INTERNAL_TOTAL_OWED_SELF_PROGRAM_DOESNT_EXIST;
 }
 
 int add_internal_balance(const char* username, const long long int value_to_add)
@@ -1493,15 +1523,15 @@ int add_internal_balance(const char* username, const long long int value_to_add)
     std::string temp_internal_username = std::string(PROG_ACT_W_SLASH) + get_username() + std::string("/") + std::string(username) + random_string;
 
     long long int internal_total_owed = get_internal_total_owed();
-    if(internal_total_owed == -1)
+    if(internal_total_owed == ERR_IN_GET_INTERNAL_TOTAL_OWED_SELF_PROGRAM_DOESNT_EXIST)
     {
       std::cerr << "\nError in add_internal_balance()! get_internal_total_owed() failed!\n\n";
-      return -3;
+      return ERR_IN_ADD_INTERNAL_BALANCE_GET_INTERNAL_TOTAL_OWED_FAILED;
     }
 
     if((value_to_add > 0) && (value_to_add > (base_amount + user_amount - internal_total_owed)))
     {
-      return -1; //value_to_add is more than what the program can fulfil using its own current funds
+      return ERR_ADD_INTERNAL_BALANCE_VALUE_TO_ADD_UNFULFILLABLE_USING_OWN_CURRENT_FUNDS; //value_to_add is more than what the program can fulfil using its own current funds
     }
 
     std::string internal_path = std::string(TCOIN_PROG_ACT_PATH) + get_username() + std::string("/") + std::string(username) + std::string(".txt");
@@ -1588,7 +1618,7 @@ int add_internal_balance(const char* username, const long long int value_to_add)
     }
     return final_return_value;
   }
-  return -2;
+  return ERR_ADD_INTERNAL_BALANCE_USERNAME_DOESNT_EXIST;
 }
 
 int main(int argc, char *argv[])
@@ -1609,7 +1639,7 @@ int main(int argc, char *argv[])
     if(!program_username.compare("n/a"))
     {
       std::cout << "\nSorry, the key you specified is not in use.\n\n";
-      return 9;
+      return ERR_KEY_NOT_IN_USE;
     }
     set_username(program_username);
   }
@@ -1685,7 +1715,7 @@ int main(int argc, char *argv[])
   if(argc < 2)
   {
     std::cout << "\nSorry, `" << PCOIN_BIN_PATH << "` doesn't work. Please use `" << PCOIN_BIN_PATH_W_SPACE << "-m` for messages or `" << PCOIN_BIN_PATH_W_SPACE << "-b` to check your balance. `" << PCOIN_BIN_PATH_W_SPACE << "--help` prints the help text.\n\n";
-    return 8;
+    return ERR_NO_ARGS;
   }
   else if(!strcmp(argv[1], "breakdown") || !strcmp(argv[1], "-bd"))
   {
@@ -1720,10 +1750,10 @@ int main(int argc, char *argv[])
   else if(!strcmp(argv[1], "total_owed") || !strcmp(argv[1], "-to"))
   {
     long long int total_owed = get_internal_total_owed();
-    if(total_owed == -1)
+    if(total_owed == ERR_IN_GET_INTERNAL_TOTAL_OWED_SELF_PROGRAM_DOESNT_EXIST)
     {
       std::cerr << "\nError in main()! get_internal_total_owed() failed!\n\n";
-      return 18;
+      return ERR_IN_MAIN_GET_INTERNAL_TOTAL_OWED_FAILED;
     }
     cout_formatted_amount(total_owed, "\n");
   }
@@ -1732,22 +1762,22 @@ int main(int argc, char *argv[])
     if(argc == 3) //second argument (the one right after "-ib") is the username
     {
       long long int internal_balance = get_internal_balance(argv[2]);
-      if(internal_balance == -1) //username check doesn't pass
+      if(internal_balance == ERR_IN_GET_INTERNAL_BALANCE) //username check doesn't pass
       {
         std::cout << "\nSorry, no user with the username `" << argv[2] << "` was found.\n\n";
-        return 17;
+        return ERR_INTERNAL_BALANCE_USERNAME_NOT_FOUND;
       }
       cout_formatted_amount(internal_balance, "\n");
     }
     else if(argc == 2) //no username supplied (too few arguments supplied)
     {
       std::cout << "\nSorry, too few command-line arguments were passed. The correct format is `" << PCOIN_BIN_PATH_W_SPACE << "internal_balance <username>`.\n\n";
-      return 10;
+      return ERR_INTERNAL_BALANCE_NO_USERNAME_SUPPLIED;
     }
     else if(argc > 3) //too many arguments supplied
     {
       std::cout << "\nSorry, too many command-line arguments were passed. The correct format is `" << PCOIN_BIN_PATH_W_SPACE << "internal_balance <username>`.\n\n";
-      return 11;
+      return ERR_INTERNAL_BALANCE_TOO_MANY_ARGS;
     }
   }
   else if(!strcmp(argv[1], "add_internal_balance") || !strcmp(argv[1], "-aib"))
@@ -1755,45 +1785,45 @@ int main(int argc, char *argv[])
     if(argc < 4)
     {
       std::cout << "\nSorry, too few command-line arguments were passed. The correct format is `" << PCOIN_BIN_PATH_W_SPACE << "add_internal_balance <username> <amount>`.\n\n";
-      return 12;
+      return ERR_ADD_INTERNAL_BALANCE_TOO_FEW_ARGS;
     }
     else if(argc > 4)
     {
       std::cout << "\nSorry, too many command-line arguments were passed. The correct format is `" << PCOIN_BIN_PATH_W_SPACE << "add_internal_balance <username> <amount>`.\n\n";
-      return 13;
+      return ERR_ADD_INTERNAL_BALANCE_TOO_MANY_ARGS;
     }
     // number of arguments is exactly 3
     {
-      int return_value = -3, return_value2 = -3;
+      int return_value = ERR_IN_ADD_INTERNAL_BALANCE_GET_INTERNAL_TOTAL_OWED_FAILED, return_value2 = ERR_IN_ADD_INTERNAL_BALANCE_GET_INTERNAL_TOTAL_OWED_FAILED;
       if(is_number(argv[3]))
         return_value = add_internal_balance(argv[2], strtol100(argv[3]));
       else
         return_value2 = add_internal_balance(argv[3], strtol100(argv[2]));
 
-      if(return_value == -1 || return_value2 == -1) //value_to_add was too large
+      if(return_value == ERR_ADD_INTERNAL_BALANCE_VALUE_TO_ADD_UNFULFILLABLE_USING_OWN_CURRENT_FUNDS || return_value2 == ERR_ADD_INTERNAL_BALANCE_VALUE_TO_ADD_UNFULFILLABLE_USING_OWN_CURRENT_FUNDS) //value_to_add was too large
       {
         std::cout << "\nSorry, the amount was larger than what the program's current unowed balance could cover.\n\n";
-        return 14;
+        return ERR_IN_MAIN_ADD_INTERNAL_BALANCE_AMOUNT_LARGER_THAN_COVERABLE_BY_UNOWED_BALANCE;
       }
-      if(return_value == 1) //value_to_add was too negative
+      if(return_value == ERR_ADD_FILE_VALUE_INSUFFICIENT_FUNDS) //value_to_add was too negative
       {
         std::cout << "\nSorry, the amount was more negative than what `" << argv[2] << "` could cover.\n\n";
-        return 16;
+        return ERR_IN_MAIN_ADD_INTERNAL_BALANCE_AMOUNT_MAKING_USER_INTERNAL_BALANCE_NEGATIVE;
       }
-      if(return_value2 == 1) //value_to_add was too negative
+      if(return_value2 == ERR_ADD_FILE_VALUE_INSUFFICIENT_FUNDS) //value_to_add was too negative
       {
         std::cout << "\nSorry, the amount was more negative than what `" << argv[3] << "` could cover.\n\n";
-        return 16;
+        return ERR_IN_MAIN_ADD_INTERNAL_BALANCE_AMOUNT_MAKING_USER_INTERNAL_BALANCE_NEGATIVE;
       }
-      if(return_value == -2) //username check doesn't pass
+      if(return_value == ERR_ADD_INTERNAL_BALANCE_USERNAME_DOESNT_EXIST) //username check doesn't pass
       {
         std::cout << "\nSorry, no user with the username `" << argv[2] << "` was found.\n\n";
-        return 15;
+        return ERR_IN_MAIN_ADD_INTERNAL_BALANCE_NO_SUCH_USERNAME_FOUND;
       }
-      if(return_value2 == -2) //username check doesn't pass
+      if(return_value2 == ERR_ADD_INTERNAL_BALANCE_USERNAME_DOESNT_EXIST) //username check doesn't pass
       {
         std::cout << "\nSorry, no user with the username `" << argv[3] << "` was found.\n\n";
-        return 15;
+        return ERR_IN_MAIN_ADD_INTERNAL_BALANCE_NO_SUCH_USERNAME_FOUND;
       }
     }
   }
@@ -1854,12 +1884,12 @@ int main(int argc, char *argv[])
     else if(argc < 4)
     {
       std::cout << "\nSorry, too few command-line arguments were passed. The correct format is `" << PCOIN_BIN_PATH_W_SPACE << "send <username> <amount>`.\n\n";
-      return 6;
+      return ERR_MAIN_SEND_TOO_FEW_ARGS;
     }
     else if(argc > 4)
     {
       std::cout << "\nSorry, too many command-line arguments were passed. The correct format is `" << PCOIN_BIN_PATH_W_SPACE << "send <username> <amount>`.\n\n";
-      return 7;
+      return ERR_MAIN_SEND_TOO_MANY_ARGS;
     }
     else
     {
@@ -1893,12 +1923,12 @@ int main(int argc, char *argv[])
           send_message(get_username().c_str(), argv[3], "", strtol100(argv[2]), "silent");
     }
     else
-      return 2;
+      return ERR_SILENTSEND;
   }
   else
   {
     std::cout << "\nSorry, an unknown command-line argument was received. `" << PCOIN_BIN_PATH_W_SPACE << "help` will print the help text.\n\n";
-    return 3;
+    return ERR_UNKNOWN_ARG;
   }
 
   return 0;
