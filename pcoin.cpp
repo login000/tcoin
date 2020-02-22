@@ -1934,6 +1934,21 @@ int main(int argc, char *argv[])
         else
           send_message(get_username().c_str(), argv[3], "", strtol100(argv[2]), "silent");
     }
+    if(argc==5) //custom message included
+    {
+      int return_value;
+      if(is_number(argv[2]))
+        return_value = send(get_username().c_str(), argv[3], strtol100(argv[2]), base_amount, "silent");
+      else
+        return_value = send(get_username().c_str(), argv[2], strtol100(argv[3]), base_amount, "silent");
+      if(!return_value) //send was successful
+      {
+        if(is_number(argv[2]))
+          send_message(get_username().c_str(), argv[3], argv[4], strtol100(argv[2]), "silent");
+        else
+          send_message(get_username().c_str(), argv[2], argv[4], strtol100(argv[3]), "silent");
+      }
+    }
     else
       return ERR_SILENTSEND;
   }
