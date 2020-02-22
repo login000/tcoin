@@ -1080,7 +1080,9 @@ int send_message(const char* sender_username, const char* receiver_username, con
               for(int i=0; message[i]!='\0'; ++i)
               {
                 if(message[i] == '\n')
-                  fout << "\u23CE "; //return-key symbol, or return symbol, or enter symbol; space for spacing
+                  fout << "<new-line>"; //return-key pressed
+                else if(message[i] == '\v')
+                  fout << "<vertical-tab>"; //vertical-tab symbol entered
                 else
                   fout << message[i];
               }
@@ -1174,7 +1176,9 @@ int send_message(const char* sender_username, const char* receiver_username, con
             for(int i=0; message[i]!='\0'; ++i)
             {
               if(message[i] == '\n')
-                fout << "\u23CE "; //return-key symbol; space for spacing
+                fout << "<new-line>"; //return-key pressed
+              else if(message[i] == '\v')
+                fout << "<vertical-tab>"; //vertical-tab symbol entered
               else
                 fout << message[i];
             }
