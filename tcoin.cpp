@@ -47,6 +47,7 @@
   #define MINERCOIN_CMD_POST_USERNAME "\": )[[:digit:]]+' /home/minerobber/Code/minerbot/minercoin.json"
 #endif
 #define USERNAME_LENGTH_LIMIT 25
+#define TCOIN_MSG_LENGTH_LIMIT 280
 
 #define ERR_NO_INIT 4
 #define ERR_ALREADY_ON 40
@@ -59,6 +60,7 @@
 #define ERR_NOT_LOGGED_IN 5
 #define ERR_MAIN_SEND_TOO_FEW_ARGS 6
 #define ERR_MAIN_SEND_TOO_MANY_ARGS 7
+#define ERR_MAIN_MSG_TOO_LONG 19
 #define ERR_SILENTSEND 2
 #define ERR_UNKNOWN_ARG 3
 #define ERR_TCOIN_TO_SELF 5
@@ -1518,6 +1520,16 @@ bool is_number(const char* test_string)
     return *p == 0;
 }
 
+bool message_is_long(const char* test_string)
+{
+  for(int i=0; i < TCOIN_MSG_LENGTH_LIMIT+1; ++i)
+    if(test_string[i] == '\0')
+    {
+      return false; //message is shorter than TCOIN_MSG_LENGTH_LIMIT characters
+    }
+  return true; //message is longer than TCOIN_MSG_LENGTH_LIMIT characters
+}
+
 int main(int argc, char *argv[])
 {
   //sneaky scrypt magic (process overlaying to maintain suid)
@@ -1708,6 +1720,12 @@ int main(int argc, char *argv[])
       else //argument count is 5 because a custom message was included
       {
         int return_value;
+        return_value = message_is_long(argv[4]);
+        if(return_value) //message is too long
+        {
+          std::cout << "\nSorry, the message was longer than " << TCOIN_MSG_LENGTH_LIMIT << " characters. Please keep messages at or below this limit.n\n";
+          return ERR_MAIN_MSG_TOO_LONG;
+        }
         if(is_number(argv[2]))
           return_value = send(get_username().c_str(), argv[3], strtol100(argv[2]), base_amount, "verbose");
         else
@@ -1726,6 +1744,12 @@ int main(int argc, char *argv[])
       if(!strcmp(argv[2], "-s"))
       { //argument count is 6 because of silent send with custom message included
         int return_value;
+        return_value = message_is_long(argv[5]);
+        if(return_value) //message is too long
+        {
+          std::cout << "\nSorry, the message was longer than " << TCOIN_MSG_LENGTH_LIMIT << " characters. Please keep messages at or below this limit.n\n";
+          return ERR_MAIN_MSG_TOO_LONG;
+        }
         if(is_number(argv[3]))
           return_value = send(get_username().c_str(), argv[4], strtol100(argv[3]), base_amount, "silent");
         else
@@ -1785,6 +1809,12 @@ int main(int argc, char *argv[])
     if(argc==5) //custom message included
     {
       int return_value;
+      return_value = message_is_long(argv[4]);
+      if(return_value) //message is too long
+      {
+        std::cout << "\nSorry, the message was longer than " << TCOIN_MSG_LENGTH_LIMIT << " characters. Please keep messages at or below this limit.n\n";
+        return ERR_MAIN_MSG_TOO_LONG;
+      }
       if(is_number(argv[2]))
         return_value = send(get_username().c_str(), argv[3], strtol100(argv[2]), base_amount, "silent");
       else
