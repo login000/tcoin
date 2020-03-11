@@ -726,7 +726,7 @@ bool is_logged_on(const char* username)
       fin.close();
       remove(salt_logged_in_file.c_str());
       remove(salt_file.c_str());
-      std::cout << "\n\nYour salt logged in file is empty. You'll have to run `tcoin init` and creata a new passphrase.\n\n";
+      std::cout << "\n\nYour salt logged in file is empty. You'll have to run `tcoin init` and create a new passphrase.\n\n";
       return false;
   }
   //control only reaches here if (fin && !file_is_empty(fin)), so the user is indeed logged in
