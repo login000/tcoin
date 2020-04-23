@@ -1490,7 +1490,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
   return final_return_value;
 }
 
-void long long int base_amount)
+void help(long long int base_amount)
 {
   std::cout << "\n - tildecoin (also called tcoin) is tilde.town's very own digital (non-crypto) currency.";
   std::cout << "\n - to participate in tilde.town's internal economy by creating your own tcoin account, run `tcoin init`.";
