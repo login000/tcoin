@@ -1,5 +1,5 @@
 # tcoin
-Currency simulator on tilde.town
+Currency simulator on tilde.town and other tildeboxes on tildeverse.org
 
 ## Instructions to get started
 1. Clone the repo.
