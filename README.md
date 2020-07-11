@@ -4,7 +4,7 @@ Currency simulator on tilde.town and other tildeboxes on tildeverse.org
 ## Instructions to get started
 1. Clone the repo.
 2. Create a service user specifically for tcoin.
-3. Make sure you have `bash`, `realpath`, `echo`, `touch`, `mkdir` and `g++` available. The source code for `realpath` is provided, in case it is not installed. These are required to run `ntcoin`.
+3. Make sure you have `bash`, `realpath`, `echo`, `touch`, `mkdir`, `g++`, `head`, `true`, `base64`, and `cat` are available.
 4. Run `./ntcoin a b c` as the service user, where `a`, `b` and `c` are defined as follows:
     * `a`: the absolute path to the directory (without the trailing slash) where the `tcoin` folder containing all the users' data will be stored (i.e., the script will create the directory `a/tcoin/`)
     * `b`: the absolute path to the directory (without the trailing slash) where the `tcoin` and `pcoin` executables will be located, i.e., all users will have to have `r-x` permissions on `b` so that they can access the executables `b/tcoin` and `b/pcoin`. Please note that `b/tcoin` and `b/pcoin` will have the suid bit set. This means that when they run `b/tcoin` and `b/pcoin`, it will be with the uid of the service user (not their own uid). This is how they are able to send and receive coins only through the executables but not modify the `a/tcoin/` themselves.
