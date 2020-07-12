@@ -116,7 +116,7 @@ else
       /bin/echo "Sorry, '`/usr/local/bin/grealpath -s $1`/tcoin/secrets/tcoin_codez' already exists."
       exit 1
     else
-      /bin/echo "`cat /dev/urandom | base64 | ghead -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'` `cat /dev/urandom | base64 | ghead -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'`" > "`/usr/local/bin/grealpath -s $1`/tcoin/secrets/tcoin_codez"
+      /bin/echo "`cat /dev/urandom | gbase64 | ghead -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'` `cat /dev/urandom | gbase64 | ghead -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'`" > "`/usr/local/bin/grealpath -s $1`/tcoin/secrets/tcoin_codez"
       /bin/chmod 400 "`/usr/local/bin/grealpath -s $1`/tcoin/secrets/tcoin_codez"
     fi
   fi
