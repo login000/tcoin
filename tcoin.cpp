@@ -38,7 +38,11 @@
 #ifndef KROWBAR_OFF
   #define KROWBAR_SCORE_PATH "/home/krowbar/Code/irc/data/tildescores.txt"
 #endif
-#define WHOAMI_PATH "/usr/bin/whoami"
+#ifndef TILDEINSTITUTE
+  #define WHOAMI_PATH "/usr/bin/whoami"
+#else
+  #define WHOAMI_PATH "/usr/bin/getent passwd $(/usr/bin/id -ru) | /usr/bin/cut -d: -f1"
+#endif
 #ifndef DA_OFF
   #define TROIDO_DACOINS_CMD "cd /home/troido/daily_adventure/client/ && /home/troido/daily_adventure/client/daclient printinfo 2>&1 | /bin/grep -oP '(?<=\"Coins\", )[[:digit:]]+'"
 #endif
@@ -1543,7 +1547,7 @@ int main(int argc, char *argv[])
     {
       std::string salt_file = std::string(TCOIN_SALT_PATH) + get_username() + std::string("_salt.txt");
       std::string password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_password.txt");
-      execl(TCOIN_SCRYPT_PATH, "scrypt", "enc", salt_file.c_str(), password_file.c_str(), NULL);
+      execl(TCOIN_SCRYPT_PATH, "scrypt", "enc", "-m", "0.25", "-t", "10", salt_file.c_str(), password_file.c_str(), NULL);
     }
     if(argc==2 && !strctcmp(argv[1], code2))
     {

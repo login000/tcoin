@@ -43,7 +43,6 @@
 #ifndef KROWBAR_OFF
   #define KROWBAR_SCORE_PATH "/home/krowbar/Code/irc/data/tildescores.txt"
 #endif
-#define WHOAMI_PATH "/usr/bin/whoami"
 #ifndef DA_OFF
   #define TROIDO_DACOINS_CMD "cd /home/troido/daily_adventure/client/ && /home/troido/daily_adventure/client/daclient printinfo 2>&1 | /bin/grep -oP '(?<=\"Coins\", )\[[:digit:]]+'"
 #endif
