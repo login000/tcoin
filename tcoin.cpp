@@ -1515,7 +1515,7 @@ void help(long long int &base_amount)
   std::cout << "\n`tcoin silentsend <username> <amount> [\"<message>\"]`, `tcoin send -s <username> <amount> [\"<message>\"]` or `tcoin -ss <username> <amount> [\"<message>\"]`: send <amount> tildecoins to <username> with an optional (as indicated by [ and ], which should not be included in the actual comment) message included without printing anything";
   std::cout << "\nIn the commands with `<username> <amount>`, switching the two arguments around (i.e., from `<username> <amount>` to `<amount> <username>`) will also work";
   std::cout << "\n`tcoin --help`, `tcoin help` or `tcoin -h`: print this help text";
-  std::cout << "\nSend an email to "; `login@tilde.town` (tilde.town local email) or `login@tilde.team` (internet-wide email), or `/query login` on IRC to request a passphrase reset.\n\n";
+  std::cout << "\nSend an email to `login@tilde.town` (tilde.town local email) or `login@tilde.team` (internet-wide email), or `/query login` on IRC to request a passphrase reset.\n\n";
 }
 
 bool is_number(const char* test_string)
