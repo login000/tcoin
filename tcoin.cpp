@@ -1496,10 +1496,11 @@ int send(const char* sender_username, const char* receiver_username, const long 
 
 void help(long long int &base_amount)
 {
-  std::cout << "\n - tildecoin (also called tcoin) is tilde.town's very own digital (non-crypto) currency.";
-  std::cout << "\n - to participate in tilde.town's internal economy by creating your own tcoin account, run `tcoin init`.";
+  std::cout << "\n - tildecoin (also called tcoin) is " << TCOIN_HOST_NAME << "'s very own digital (non-crypto) currency.";
+  std::cout << "\n - to participate in " << TCOIN_HOST_NAME << "'s internal economy by creating your own tcoin account, run `tcoin init`.";
   std::cout << "\n - all users get "; cout_formatted_amount(base_amount); std::cout << " coins to start, and can send and receive coins from other users (and programs).";
   std::cout << "\n - more information about tildecoin is available at \"https://tilde.town/~login/tcoin.html\".\n";
+
   std::cout << "\n`tcoin`: check your balance and the 10 latest lines of messages";
   std::cout << "\n`tcoin on`: log on to tildecoin";
   std::cout << "\n`tcoin off`: out out of tildecoin";
@@ -1514,7 +1515,7 @@ void help(long long int &base_amount)
   std::cout << "\n`tcoin silentsend <username> <amount> [\"<message>\"]`, `tcoin send -s <username> <amount> [\"<message>\"]` or `tcoin -ss <username> <amount> [\"<message>\"]`: send <amount> tildecoins to <username> with an optional (as indicated by [ and ], which should not be included in the actual comment) message included without printing anything";
   std::cout << "\nIn the commands with `<username> <amount>`, switching the two arguments around (i.e., from `<username> <amount>` to `<amount> <username>`) will also work";
   std::cout << "\n`tcoin --help`, `tcoin help` or `tcoin -h`: print this help text";
-  std::cout << "\nSend an email to `login@tilde.town` (tilde.town local email) or `login@tilde.team` (internet-wide email), or `/query login` on IRC to request a passphrase reset.\n\n";
+  std::cout << "\nSend an email to "; `login@tilde.town` (tilde.town local email) or `login@tilde.team` (internet-wide email), or `/query login` on IRC to request a passphrase reset.\n\n";
 }
 
 bool is_number(const char* test_string)

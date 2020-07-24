@@ -3,13 +3,13 @@
 if [ "$#" -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
 then
   /bin/echo "Usage:"
-  /bin/echo "  ntcoin <path (no slash)> <bin path (no slash)> <n> : to create the tcoin directory in <path (no slash)> with the executable saved to <bin path (no slash)> and with <n> basecoins per user"
-  /bin/echo "  ntcoin <path (no slash)> <bin path (no slash)> [ --def | -d ]: to print only the #define preprocessor directives without creating any directories"
+  /bin/echo "  ntcoin <path (no slash)> <bin path (no slash)> <n> <host name>: to create the tcoin directory in <path (no slash)> with the executable saved to <bin path (no slash)> and with <n> basecoins per user with the help showing the host name <host name>"
+  /bin/echo "  ntcoin <path (no slash)> <bin path (no slash)> <host name> --def | -d: to print only the #define preprocessor directives without creating any directories"
   /bin/echo "  ntcoin [ --help | -h ] : to print this help"
-elif [ "$3" = "--def" ] || [ "$3" = "-d" ]
+elif [ "$4" = "--def" ] || [ "$4" = "-d" ]
 then
   /bin/echo "Printing tcoin.cpp (and pcoin.cpp) preprocessor directives."
-  /bin/echo 'Paste the following in '`/usr/local/bin/grealpath -s $2`'/tcoin/bin/tcoin_defs.cpp (and '`/usr/local/bin/grealpath -s $1`'/tcoin/bin/pcoin_defs.cpp):
+  /bin/echo 'Paste the following in '`/usr/local/bin/grealpath -s $1`'/tcoin/bin/tcoin_defs.cpp (and '`/usr/local/bin/grealpath -s $1`'/tcoin/bin/pcoin_defs.cpp):
 '
   /bin/echo '#define TCOIN_PATH "'`/usr/local/bin/grealpath -s $1`'/tcoin"
 #define TCOIN_MSG_PATH "'`/usr/local/bin/grealpath -s $1`'/tcoin/messages/"
@@ -24,6 +24,7 @@ then
 #define TCOIN_SCRYPT_PATH "'`/usr/local/bin/grealpath -s $1`'/tcoin/bin/scrypt"
 #define PCOIN_BIN_PATH "'`/usr/local/bin/grealpath -s $2`'/pcoin"
 #define PCOIN_BIN_PATH_W_SPACE "'`/usr/local/bin/grealpath -s $2`'/pcoin "
+#define TCOIN_HOST_NAME "'$3'"
 #define KROWBAR_OFF
 #define DA_OFF
 #define MINERCOIN_OFF'
@@ -33,6 +34,11 @@ else
     ''|*[!0-9]*) /bin/echo "Sorry, the number of basecoins <n> should be a positive integer."; exit 1 ;;
     *) ;;
   esac
+  if [ "$#" -ne 4 ]
+  then
+    /bin/echo "Sorry, the number of arguments must be exactly 4."
+    exit 1
+  fi
   if [ -d "`/usr/local/bin/grealpath -s $1`/tcoin" ]
   then
     /bin/echo "Sorry, '`/usr/local/bin/grealpath -s $1`/tcoin' already exists."
@@ -152,6 +158,7 @@ else
 #define TCOIN_BIN_PATH_W_SPACE "'`/usr/local/bin/grealpath -s $2`'/tcoin "
 #define TCOIN_PATH_W_SLASH "'`/usr/local/bin/grealpath -s $1`'/tcoin/"
 #define TCOIN_SCRYPT_PATH "'`/usr/local/bin/grealpath -s $1`'/tcoin/bin/scrypt"
+#define TCOIN_HOST_NAME "'$4'"
 #define KROWBAR_OFF
 #define DA_OFF
 #define MINERCOIN_OFF' > "`/usr/local/bin/grealpath -s $1`/tcoin/bin/tcoin_defs.cpp"
