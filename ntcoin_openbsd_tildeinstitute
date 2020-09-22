@@ -27,7 +27,8 @@ then
 #define TCOIN_HOST_NAME "'$3'"
 #define KROWBAR_OFF
 #define DA_OFF
-#define MINERCOIN_OFF'
+#define MINERCOIN_OFF
+#define TILDEINSTITUTE'
 else
   #see https://stackoverflow.com/a/3951175
   case $3 in
@@ -161,7 +162,8 @@ else
 #define TCOIN_HOST_NAME "'$4'"
 #define KROWBAR_OFF
 #define DA_OFF
-#define MINERCOIN_OFF' > "`/usr/local/bin/grealpath -s $1`/tcoin/bin/tcoin_defs.cpp"
+#define MINERCOIN_OFF
+#define TILDEINSTITUTE' > "`/usr/local/bin/grealpath -s $1`/tcoin/bin/tcoin_defs.cpp"
       /bin/chmod 640 "`/usr/local/bin/grealpath -s $1`/tcoin/bin/tcoin_defs.cpp"
     fi
     if [ -e "`/usr/local/bin/grealpath -s $1`/tcoin/bin/pcoin_defs.cpp" ]
@@ -183,7 +185,8 @@ else
 #define PCOIN_BIN_PATH_W_SPACE "'`/usr/local/bin/grealpath -s $2`'/pcoin "
 #define KROWBAR_OFF
 #define DA_OFF
-#define MINERCOIN_OFF' > "`/usr/local/bin/grealpath -s $1`/tcoin/bin/pcoin_defs.cpp"
+#define MINERCOIN_OFF
+#define TILDEINSTITUTE' > "`/usr/local/bin/grealpath -s $1`/tcoin/bin/pcoin_defs.cpp"
       /bin/chmod 640 "`/usr/local/bin/grealpath -s $1`/tcoin/bin/pcoin_defs.cpp"
     fi
     if [ -e "`/usr/local/bin/grealpath -s $1`/tcoin/bin/tcoin" ]
