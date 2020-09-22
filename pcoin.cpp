@@ -690,7 +690,11 @@ int send_message(const char* sender_username, const char* receiver_username, con
 
       time_t now = std::time(NULL);
       char dt[26];
-      std::strftime(dt, 26, "%a %b %_d %T %Y", std::gmtime(&now));
+      #ifndef TILDEINSTITUTE
+        std::strftime(dt, 26, "%a %b %_d %T %Y", std::gmtime(&now));
+      #else
+        std::strftime(dt, 26, "%a %b %e %T %Y", std::gmtime(&now));
+      #endif
       char sender_formatted_string[26];
       char sender_arrow_formatted_string[47];
       char sender_arrow_string[47];
@@ -877,7 +881,11 @@ int send_message(const char* sender_username, const char* receiver_username, con
           fout << fin.rdbuf();
 
           now = std::time(NULL);
-          std::strftime(dt, 26, "%a %b %_d %T %Y", std::gmtime(&now));
+          #ifndef TILDEINSTITUTE
+             std::strftime(dt, 26, "%a %b %_d %T %Y", std::gmtime(&now));
+          #else
+             std::strftime(dt, 26, "%a %b %e %T %Y", std::gmtime(&now));
+          #endif
           char sender_formatted_string_right_aligned[26];
           char receiver_arrow_formatted_string[47];
           char receiver_arrow_string[47];
