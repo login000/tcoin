@@ -447,7 +447,7 @@ bool files_are_same(const char* file_path1, const char* file_path2)
 
   char c1;
   char c2;
-  while(fin1.get(c1) && fin2.get(c2)) //we need to go inside the loop body even if one of the reads fails, so we use || instead of &&
+  while(fin1.get(c1) && fin2.get(c2))
   {
     if(c2 != c1)
       return false;
