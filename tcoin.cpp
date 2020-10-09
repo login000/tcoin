@@ -1718,38 +1718,50 @@ int main(int argc, char *argv[])
       if(!strcmp(argv[2], "-s")) //silent send with no message
       {
         int return_value;
+        long long int amount = 0;
+        char *receiver = NULL;
+
         if(is_number(argv[3]))
-          return_value = send(get_username().c_str(), argv[4], strtol100(argv[3]), base_amount, "silent");
-        else
-          return_value = send(get_username().c_str(), argv[3], strtol100(argv[4]), base_amount, "silent");
-        if(!return_value) //send was successful
         {
-          if(is_number(argv[3]))
-            send_message(get_username().c_str(), argv[4], "", strtol100(argv[3]), "silent");
-          else
-            send_message(get_username().c_str(), argv[3], "", strtol100(argv[4]), "silent");
+          amount = strtol100(argv[3]);
+          receiver = argv[4];
         }
+        else
+        {
+          amount = strtol100(argv[4]);
+          receiver = argv[3];
+        }
+        return_value = send(get_username().c_str(), receiver, amount, base_amount, "silent");
+        if(!return_value) //send was successful
+          send_message(get_username().c_str(), receiver, "", amount, "silent");
       }
       else //argument count is 5 because a custom message was included
       {
         int return_value;
+        long long int amount = 0;
+        char *receiver = NULL;
+
         return_value = message_is_long(argv[4]);
+
         if(return_value) //message is too long
         {
           std::cout << "\nSorry, the message was longer than " << TCOIN_MSG_LENGTH_LIMIT << " characters. Please keep messages at or below this limit.\n\n";
           return ERR_MAIN_MSG_TOO_LONG;
         }
+
         if(is_number(argv[2]))
-          return_value = send(get_username().c_str(), argv[3], strtol100(argv[2]), base_amount, "verbose");
-        else
-          return_value = send(get_username().c_str(), argv[2], strtol100(argv[3]), base_amount, "verbose");
-        if(!return_value) //send was successful
         {
-          if(is_number(argv[2]))
-            send_message(get_username().c_str(), argv[3], argv[4], strtol100(argv[2]), "verbose");
-          else
-            send_message(get_username().c_str(), argv[2], argv[4], strtol100(argv[3]), "verbose");
+          amount = strtol100(argv[2]);
+          receiver = argv[3];
         }
+        else
+        {
+          amount = strtol100(argv[3]);
+          receiver = argv[2];
+        }
+        return_value = send(get_username().c_str(), receiver, amount, base_amount, "verbose");
+        if(!return_value) //send was successful
+          send_message(get_username().c_str(), receiver, argv[4], amount, "verbose");
       }
     }
     else if(argc == 6)
@@ -1757,23 +1769,29 @@ int main(int argc, char *argv[])
       if(!strcmp(argv[2], "-s"))
       { //argument count is 6 because of silent send with custom message included
         int return_value;
+        long long int amount = 0;
+        char *receiver = NULL;
+
         return_value = message_is_long(argv[5]);
+
         if(return_value) //message is too long
         {
           std::cout << "\nSorry, the message was longer than " << TCOIN_MSG_LENGTH_LIMIT << " characters. Please keep messages at or below this limit.\n\n";
           return ERR_MAIN_MSG_TOO_LONG;
         }
         if(is_number(argv[3]))
-          return_value = send(get_username().c_str(), argv[4], strtol100(argv[3]), base_amount, "silent");
-        else
-          return_value = send(get_username().c_str(), argv[3], strtol100(argv[4]), base_amount, "silent");
-        if(!return_value) //send was successful
         {
-          if(is_number(argv[3]))
-            send_message(get_username().c_str(), argv[4], argv[5], strtol100(argv[3]), "silent");
-          else
-            send_message(get_username().c_str(), argv[3], argv[5], strtol100(argv[4]), "silent");
+          amount = strtol100(argv[3]);
+          receiver = argv[4];
         }
+        else
+        {
+          amount = strtol100(argv[4]);
+          receiver = argv[3];
+        }
+        return_value = send(get_username().c_str(), receiver, amount, base_amount, "silent");
+        if(!return_value) //send was successful
+          send_message(get_username().c_str(), receiver, argv[5], amount, "silent");
       }
     }
     else if(argc < 4)
@@ -1789,17 +1807,22 @@ int main(int argc, char *argv[])
     else
     {
       int return_value;
+      long long int amount = 0;
+      char* receiver = NULL;
+
       if(is_number(argv[2]))
-        return_value = send(get_username().c_str(), argv[3], strtol100(argv[2]), base_amount, "verbose");
-      else
-        return_value = send(get_username().c_str(), argv[2], strtol100(argv[3]), base_amount, "verbose");
-      if(!return_value) //send was successful
       {
-        if(is_number(argv[2]))
-          send_message(get_username().c_str(), argv[3], "", strtol100(argv[2]), "verbose");
-        else
-          send_message(get_username().c_str(), argv[2], "", strtol100(argv[3]), "verbose");
+        amount = strtol100(argv[2]);
+        receiver = argv[3];
       }
+      else
+      {
+        amount = strtol100(argv[3]);
+        receiver = argv[2];
+      }
+      return_value = send(get_username().c_str(), receiver, amount, base_amount, "verbose");
+      if(!return_value) //send was successful
+        send_message(get_username().c_str(), receiver, "", amount, "verbose");
     }
   }
   else if(!strcmp(argv[1], "silentsend") || !strcmp(argv[1], "-ss"))
@@ -1807,38 +1830,49 @@ int main(int argc, char *argv[])
     if(argc==4)
     {
       int return_value;
+      long long int amount = 0;
+      char* receiver = NULL;
+
       if(is_number(argv[2]))
-        return_value = send(get_username().c_str(), argv[3], strtol100(argv[2]), base_amount, "silent");
-      else
-        return_value = send(get_username().c_str(), argv[2], strtol100(argv[3]), base_amount, "silent");
-      if(!return_value) //send was successful
       {
-        if(is_number(argv[2]))
-          send_message(get_username().c_str(), argv[3], "", strtol100(argv[2]), "silent");
-        else
-          send_message(get_username().c_str(), argv[2], "", strtol100(argv[3]), "silent");
+        amount = strtol100(argv[2]);
+        receiver = argv[3];
       }
+      else
+      {
+        amount = strtol100(argv[3]);
+        receiver = argv[2];
+      }
+      return_value = send(get_username().c_str(), receiver, amount, base_amount, "silent");
+      if(!return_value) //send was successful
+        send_message(get_username().c_str(), receiver, "", amount, "silent");
     }
     if(argc==5) //custom message included
     {
       int return_value;
+      long long int amount = 0;
+      char* receiver = NULL;
+
       return_value = message_is_long(argv[4]);
       if(return_value) //message is too long
       {
         std::cout << "\nSorry, the message was longer than " << TCOIN_MSG_LENGTH_LIMIT << " characters. Please keep messages at or below this limit.\n\n";
         return ERR_MAIN_MSG_TOO_LONG;
       }
+
       if(is_number(argv[2]))
-        return_value = send(get_username().c_str(), argv[3], strtol100(argv[2]), base_amount, "silent");
-      else
-        return_value = send(get_username().c_str(), argv[2], strtol100(argv[3]), base_amount, "silent");
-      if(!return_value) //send was successful
       {
-        if(is_number(argv[2]))
-          send_message(get_username().c_str(), argv[3], argv[4], strtol100(argv[2]), "silent");
-        else
-          send_message(get_username().c_str(), argv[2], argv[4], strtol100(argv[3]), "silent");
+        amount = strtol100(argv[2]);
+        receiver = argv[3];
       }
+      else
+      {
+        amount = strtol100(argv[3]);
+        receiver = argv[2];
+      }
+      return_value = send(get_username().c_str(), receiver, amount, base_amount, "silent");
+      if(!return_value) //send was successful
+        send_message(get_username().c_str(), receiver, argv[4], amount, "silent");
     }
     else
       return ERR_SILENTSEND;
