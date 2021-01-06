@@ -86,6 +86,8 @@ void exit_program(const int error_number)
 {
   // Cleanup to do before exiting the program
 
+  //TODO: Print the actual error code to stderr
+
   // Finally, we can exit
   std::exit(error_number);
 }
