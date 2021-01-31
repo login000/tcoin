@@ -909,8 +909,8 @@ int send_message(const char* sender_username, const char* receiver_username, con
 {
   std::string random_string = std::to_string(rand());
 
-  char *receiver_path = new char[strlen(receiver_username) + 41]; //40 + 1 for '\0'
-  char *temp_receiver_path = new char[strlen(receiver_username) + strlen(random_string.c_str()) + 41];
+  char *receiver_path = new char[strlen(receiver_username) + sizeof(TCOIN_MSG_PATH) + 13]; //sizeof() includes '\0'
+  char *temp_receiver_path = new char[strlen(receiver_username) + strlen(random_string.c_str()) + sizeof(TCOIN_MSG_PATH) + 13];
 
   std::strcpy(receiver_path, TCOIN_MSG_PATH); //length = 27
   std::strcat(receiver_path, receiver_username);
@@ -926,13 +926,13 @@ int send_message(const char* sender_username, const char* receiver_username, con
   //account when she/he initialises her/his account
   //at a later time
 
-  char *receiver_salt_path = new char[strlen(receiver_username) + 34];
-  char *receiver_salt_logged_in_path = new char[strlen(receiver_username) + 44];
+  char *receiver_salt_path = new char[strlen(receiver_username) + sizeof(TCOIN_SALT_PATH) + 9]; //sizeof() includes '\0'
+  char *receiver_salt_logged_in_path = new char[strlen(receiver_username) + sizeof(TCOIN_SALT_PATH) + 19];
   std::strcpy(receiver_salt_path, TCOIN_SALT_PATH);
   std::strcat(receiver_salt_path, receiver_username);
   std::strcpy(receiver_salt_logged_in_path, receiver_salt_path);
-  std::strcat(receiver_salt_path, "_salt.txt");
-  std::strcat(receiver_salt_logged_in_path, "_salt_logged_in.txt");
+  std::strcat(receiver_salt_path, "_salt.txt"); //length = 9
+  std::strcat(receiver_salt_logged_in_path, "_salt_logged_in.txt"); //length = 19
 
   std::ifstream fin(receiver_path);
   std::ifstream fin2(receiver_salt_path);
@@ -961,7 +961,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
     {
       char *really_temp_receiver_path = new char[strlen(temp_receiver_path) + 5];  //4 + 1 for '\0'
       std::strcpy(really_temp_receiver_path, temp_receiver_path);
-      std::strcat(really_temp_receiver_path, "_tmp");
+      std::strcat(really_temp_receiver_path, "_tmp"); //length = 4
 
       std::ifstream fin(temp_receiver_path);
       std::ofstream fout(really_temp_receiver_path);
@@ -1136,17 +1136,17 @@ int send_message(const char* sender_username, const char* receiver_username, con
 
       random_string = std::to_string(rand());
 
-      char *sender_path = new char[strlen(sender_username) + 41];
-      char *temp_sender_path = new char[strlen(sender_username) + strlen(random_string.c_str()) + 41];
+      char *sender_path = new char[strlen(sender_username) + sizeof(TCOIN_MSG_PATH) + 13]; //sizeof() includes '\0'
+      char *temp_sender_path = new char[strlen(sender_username) + strlen(random_string.c_str()) + sizeof(TCOIN_MSG_PATH) + 13];
 
       std::strcpy(sender_path, TCOIN_MSG_PATH);
       std::strcat(sender_path, sender_username);
-      std::strcat(sender_path, "_messages.txt");
+      std::strcat(sender_path, "_messages.txt"); // length = 13
 
       std:strcpy(temp_sender_path, TCOIN_MSG_PATH);
       std::strcat(temp_sender_path, sender_username);
       std::strcat(temp_sender_path, random_string.c_str());
-      std::strcat(temp_sender_path, "_messages.txt");
+      std::strcat(temp_sender_path, "_messages.txt"); // length = 13
 
       while(1)
       {
@@ -1154,7 +1154,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
         {
           char *really_temp_sender_path = new char[strlen(temp_sender_path) + 5];
           std::strcpy(really_temp_sender_path, temp_sender_path);
-          std::strcat(really_temp_sender_path, "_tmp");
+          std::strcat(really_temp_sender_path, "_tmp"); // length = 4
 
           fin.open(temp_sender_path);
           fout.open(really_temp_sender_path);
@@ -1284,8 +1284,9 @@ int send(const char* sender_username, const char* receiver_username, const long 
       std::string random_string = std::to_string(rand());
       int return_value = -1;
 
-      char* temp_sender_path = new char[strlen(sender_username) + strlen(random_string.c_str()) + 23];
-      char* sender_path = new char[strlen(sender_username) + 23];
+      // sizeof() includes the NULL character at the end of the string
+      char* temp_sender_path = new char[strlen(sender_username) + strlen(random_string.c_str()) + sizeof(TCOIN_PATH_W_SLASH) + 4];
+      char* sender_path = new char[strlen(sender_username) + sizeof(TCOIN_PATH_W_SLASH) + 4];
       char* temp_sender_username = new char[strlen(sender_username) + strlen(random_string.c_str()) + 1];
 
       std::strcpy(temp_sender_username, sender_username);
@@ -1311,8 +1312,9 @@ int send(const char* sender_username, const char* receiver_username, const long 
           {
             random_string = std::to_string(rand());
 
-            char *temp_receiver_path = new char[strlen(receiver_username) + strlen(random_string.c_str()) + 23];
-            char *receiver_path = new char[strlen(receiver_username) + 23];
+            // sizeof() includes the NULL character at the end of the string
+            char *temp_receiver_path = new char[strlen(receiver_username) + strlen(random_string.c_str()) + sizeof(TCOIN_PATH_W_SLASH) + 4];
+            char *receiver_path = new char[strlen(receiver_username) + sizeof(TCOIN_PATH_W_SLASH) + 4];
             char *temp_receiver_username = new char[strlen(receiver_username) + strlen(random_string.c_str()) + 1];
 
             std::strcpy(temp_receiver_username, receiver_username);
@@ -1330,8 +1332,9 @@ int send(const char* sender_username, const char* receiver_username, const long 
             //the balance will be included in the receiver's
             //account when she/he initialises her/his account
             //at a later time
-            char *receiver_salt_path = new char[strlen(receiver_username) + 34];
-            char *receiver_salt_logged_in_path = new char[strlen(receiver_username) + 44];
+            char *receiver_salt_path = new char[strlen(receiver_username) + sizeof(TCOIN_SALT_PATH) + 9];
+            // sizeof() includes the NULL character at the end of the string
+            char *receiver_salt_logged_in_path = new char[strlen(receiver_username) + sizeof(TCOIN_SALT_PATH) + 19];
             std::strcpy(receiver_salt_path, TCOIN_SALT_PATH);
             std::strcat(receiver_salt_path, receiver_username);
             std::strcpy(receiver_salt_logged_in_path, receiver_salt_path);
