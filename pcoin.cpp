@@ -224,7 +224,7 @@ std::string exec(const char* cmd) {
 
 long long int get_file_value(const char* file_name)
 {
-  char* file_path = new char[strlen(file_name)+strlen(TCOIN_PATH_W_SLASH)+5];
+  char* file_path = new char[strlen(file_name)+sizeof(TCOIN_PATH_W_SLASH)+4];
   std::strcpy(file_path, TCOIN_PATH_W_SLASH);
   std::strcat(file_path, file_name);
   std::strcat(file_path, ".txt");
@@ -253,8 +253,8 @@ long long int get_file_value(const char* file_name)
 
 int add_file_value(const char* file_name, const long long int &value_to_add, const long long int &base_amount)
 {
-  char* file_path = new char[strlen(file_name)+strlen(TCOIN_PATH_W_SLASH)+5];
-  char* temp_file_path = new char[strlen(file_name)+strlen(TCOIN_PATH_W_SLASH)+9];
+  char* file_path = new char[strlen(file_name)+sizeof(TCOIN_PATH_W_SLASH)+4];
+  char* temp_file_path = new char[strlen(file_name)+sizeof(TCOIN_PATH_W_SLASH)+8];
   std::strcpy(file_path, TCOIN_PATH_W_SLASH);
   std::strcat(file_path, file_name);
   std::strcpy(temp_file_path, file_path);
