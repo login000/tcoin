@@ -64,6 +64,7 @@
 #define ERR_NOT_LOGGED_IN 5
 #define ERR_MAIN_SEND_TOO_FEW_ARGS 6
 #define ERR_MAIN_SEND_TOO_MANY_ARGS 7
+#define ERR_MAIN_SEND_TOO_MANY_ARGS_MSG 104
 #define ERR_MAIN_MSG_TOO_LONG 19
 #define ERR_SILENTSEND 2
 #define ERR_UNKNOWN_ARG 3
@@ -1800,8 +1801,9 @@ int main(int argc, char *argv[])
       }
       else
       {
-        //too many command-line arguments were passed (6 args)
-        goto LABEL_TOO_MANY_ARGS;
+        //too many command-line arguments were passed (6 args) (probably a message was intended)
+        std::cout << "\nSorry, too many command-line arguments were passed. The correct format is `tcoin send <username> <amount> \"<message>\"`.\n\n";
+        return ERR_MAIN_SEND_TOO_MANY_ARGS_MSG;
       }
     }
     else if(argc < 4)
@@ -1811,7 +1813,6 @@ int main(int argc, char *argv[])
     }
     else if(argc > 4)
     {
-      LABEL_TOO_MANY_ARGS:
       std::cout << "\nSorry, too many command-line arguments were passed. The correct format is `tcoin send <username> <amount>`.\n\n";
       return ERR_MAIN_SEND_TOO_MANY_ARGS;
     }
