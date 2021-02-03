@@ -1940,6 +1940,11 @@ int main(int argc, char *argv[])
         if(!return_value) //send was successful
           send_message(get_username().c_str(), receiver, argv[5], amount, "silent");
       }
+      else
+      {
+        //too many command-line arguments were passed (6 args)
+        goto LABEL_TOO_MANY_ARGS;
+      }
     }
     else if(argc < 4)
     {
@@ -1948,6 +1953,7 @@ int main(int argc, char *argv[])
     }
     else if(argc > 4)
     {
+      LABEL_TOO_MANY_ARGS:
       std::cout << "\nSorry, too many command-line arguments were passed. The correct format is `" << PCOIN_BIN_PATH_W_SPACE << "send <username> <amount>`.\n\n";
       return ERR_MAIN_SEND_TOO_MANY_ARGS;
     }
