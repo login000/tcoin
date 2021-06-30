@@ -26,7 +26,7 @@
 #define TCOIN_PASS_PATH "/home/login/tcoin/passwords/"
 #define TCOIN_PROG_ACT_PATH "/home/login/tcoin/program_accounting/"
 #define PROG_ACT_W_SLASH "program_accounting/"
-#define PCOIN_KEY_PATH "/home/login/bin/pcoin_keys"
+#define PCOIN_KEY_PATH_W_SLASH "/home/login/bin/pcoin_keys/"
 #define TCOIN_CODEZ_PATH "/home/login/bin/tcoin_codez"
 #define TCOIN_BIN_PATH_W_SPACE "/home/login/bin/tcoin "
 #define TCOIN_PATH_W_SLASH "/home/login/tcoin/"
@@ -596,21 +596,30 @@ void show_messages_tail(const char* username, int lineCount)
 
 bool program_exists(const char* username)
 {
-  std::ifstream fin(PCOIN_KEY_PATH);
-  //first word is program username, second word is key
-  std::string word1;
-  std::string word2;
-  while(fin >> word1)
+  char *program_key_path = new char[strlen(username) + sizeof(PCOIN_KEY_PATH_W_SLASH) + 4]; //sizeof counts NULL char at the end too
+  std::strcpy(program_key_path, PCOIN_KEY_PATH_W_SLASH);
+  std::strcat(program_key_path, username);
+  std::strcat(program_key_path, ".txt");
+
+  std::ifstream fin(program_key_path);
+  bool return_value = false;
+
+  if(!fin) //file doesn't exist
   {
-    if(!word1.compare(username))
-    {
-      fin.close();
-      return true;
-    }
-    fin >> word2; //to get rid of the second word (which is the key)
+    fin.close();
+    delete[] program_key_path;
+
+    return_value = false; //program account not found
   }
-  fin.close();
-  return false; //if program not found
+  else
+  {
+    fin.close();
+    delete[] program_key_path;
+
+    return_value = true; //program account found
+  }
+
+  return return_value;
 }
 
 bool username_exists(const char* username)
