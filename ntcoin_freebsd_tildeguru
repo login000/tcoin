@@ -204,7 +204,7 @@ else
 && (/bin/chmod u+s "'`/bin/realpath -q $2`'/tcoin") \
 && (/bin/cp "'`/bin/realpath -q $1`'/tcoin/bin/tcoin_defs.cpp" "'`/bin/realpath -q $2`'/tcoin_defs.cpp")' > "`/bin/realpath -q $1`/tcoin/bin/compile_tcoin"
       /bin/chmod 540 "`/bin/realpath -q $1`/tcoin/bin/compile_tcoin"
-      /bin/echo '#!usr/local/bin/bash
+      /bin/echo '#!/usr/local/bin/bash
 '`which nano`' "'`/bin/pwd`'/tcoin.cpp"' > "`/bin/realpath -q $1`/tcoin/bin/edit_tcoin"
       /bin/chmod 540 "`/bin/realpath -q $1`/tcoin/bin/edit_tcoin"
       /usr/local/bin/bash "`/bin/realpath -q $1`/tcoin/bin/compile_tcoin"
