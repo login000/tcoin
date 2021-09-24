@@ -1,0 +1,237 @@
+#!/usr/local/bin/bash
+
+if [ "$#" -eq 0 ] || [ "$1" = "--help" ] || [ "$1" = "-h" ]
+then
+  /bin/echo "Usage:"
+  /bin/echo "  ntcoin <path (no slash)> <bin path (no slash)> <n> <host name>: to create the tcoin directory in <path (no slash)> with the executable saved to <bin path (no slash)> and with <n> basecoins per user with the help showing the host name <host name>"
+  /bin/echo "  ntcoin <path (no slash)> <bin path (no slash)> <host name> --def | -d: to print only the #define preprocessor directives without creating any directories"
+  /bin/echo "  ntcoin [ --help | -h ] : to print this help"
+elif [ "$4" = "--def" ] || [ "$4" = "-d" ]
+then
+  /bin/echo "Printing tcoin.cpp (and pcoin.cpp) preprocessor directives."
+  /bin/echo 'Paste the following in '`/bin/realpath -q $1`'/tcoin/bin/tcoin_defs.cpp (and '`/bin/realpath -q $1`'/tcoin/bin/pcoin_defs.cpp):
+'
+  /bin/echo '#define TCOIN_PATH "'`/bin/realpath -q $1`'/tcoin"
+#define TCOIN_MSG_PATH "'`/bin/realpath -q $1`'/tcoin/messages/"
+#define TCOIN_SALT_PATH "'`/bin/realpath -q $1`'/tcoin/salts/"
+#define TCOIN_PASS_PATH "'`/bin/realpath -q $1`'/tcoin/passwords/"
+#define TCOIN_PROG_ACT_PATH "'`/bin/realpath -q $1`'/tcoin/program_accounting/"
+#define PROG_ACT_W_SLASH "program_accounting/"
+#define PCOIN_KEY_PATH_W_SLASH "'`/bin/realpath -q $1`'/tcoin/secrets/pcoin_keys/"
+#define LS_PCOIN_KEY_CMD "/bin/ls '`/bin/realpath -q $1`'/tcoin/secrets/pcoin_keys"
+#define TCOIN_CODEZ_PATH "'`/bin/realpath -q $1`'/tcoin/secrets/tcoin_codez"
+#define TCOIN_BIN_PATH_W_SPACE "'`/bin/realpath -q $2`'/tcoin "
+#define TCOIN_PATH_W_SLASH "'`/bin/realpath -q $1`'/tcoin/"
+#define TCOIN_SCRYPT_PATH "'`/bin/realpath -q $1`'/tcoin/bin/scrypt"
+#define PCOIN_BIN_PATH "'`/bin/realpath -q $2`'/pcoin"
+#define PCOIN_BIN_PATH_W_SPACE "'`/bin/realpath -q $2`'/pcoin "
+#define TCOIN_HOST_NAME "'$3'"
+#define KROWBAR_OFF
+#define DA_OFF
+#define MINERCOIN_OFF'
+else
+  #see https://stackoverflow.com/a/3951175
+  case $3 in
+    ''|*[!0-9]*) /bin/echo "Sorry, the number of basecoins <n> should be a positive integer."; exit 1 ;;
+    *) ;;
+  esac
+  if [ "$#" -ne 4 ]
+  then
+    /bin/echo "Sorry, the number of arguments must be exactly 4."
+    exit 1
+  fi
+  if [ -d "`/bin/realpath -q $1`/tcoin" ]
+  then
+    /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin' already exists."
+    exit 1
+  else
+    /bin/mkdir "`/bin/realpath -q $1`/tcoin"
+    /bin/chmod 700 "`/bin/realpath -q $1`/tcoin"
+    /bin/chmod u+s "`/bin/realpath -q $1`/tcoin"
+  fi
+  if [ -d "`/bin/realpath -q $1`/tcoin/salts" ]
+  then
+    /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/salts' already exists."
+    exit 1
+  else
+    /bin/mkdir "`/bin/realpath -q $1`/tcoin/salts"
+    /bin/chmod 700 "`/bin/realpath -q $1`/tcoin/salts"
+    /bin/chmod u+s "`/bin/realpath -q $1`/tcoin/salts"
+  fi
+  if [ -d "`/bin/realpath -q $1`/tcoin/passwords" ]
+  then
+    /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/passwords' already exists."
+    exit 1
+  else
+    /bin/mkdir "`/bin/realpath -q $1`/tcoin/passwords"
+    /bin/chmod 700 "`/bin/realpath -q $1`/tcoin/passwords"
+    /bin/chmod u+s "`/bin/realpath -q $1`/tcoin/passwords"
+  fi
+  if [ -d "`/bin/realpath -q $1`/tcoin/program_accounting" ]
+  then
+    /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/program_accounting' already exists."
+    exit 1
+  else
+    /bin/mkdir "`/bin/realpath -q $1`/tcoin/program_accounting"
+    /bin/chmod 700 "`/bin/realpath -q $1`/tcoin/program_accounting"
+    /bin/chmod u+s "`/bin/realpath -q $1`/tcoin/program_accounting"
+  fi
+  if [ -d "`/bin/realpath -q $1`/tcoin/messages" ]
+  then
+    /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/messages' already exists."
+    exit 1
+  else
+    /bin/mkdir "`/bin/realpath -q $1`/tcoin/messages"
+    /bin/chmod 700 "`/bin/realpath -q $1`/tcoin/messages"
+    /bin/chmod u+s "`/bin/realpath -q $1`/tcoin/messages"
+  fi
+  if [ -d "`/bin/realpath -q $1`/tcoin/base" ]
+  then
+    /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/base' already exists."
+    exit 1
+  else
+    /bin/mkdir "`/bin/realpath -q $1`/tcoin/base"
+    /bin/chmod 700 "`/bin/realpath -q $1`/tcoin/base"
+    /bin/chmod u+s "`/bin/realpath -q $1`/tcoin/base"
+    if [ -e "`/bin/realpath -q $1`/tcoin/base/base.txt" ]
+    then
+      /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/base/base.txt' already exists."
+      exit 1
+    else
+      /bin/echo "$3""00" > "`/bin/realpath -q $1`/tcoin/base/base.txt"
+      /bin/chmod 600 "`/bin/realpath -q $1`/tcoin/base/base.txt"
+    fi
+  fi
+  if [ -d "`/bin/realpath -q $1`/tcoin/secrets" ]
+  then
+    /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/secrets' already exists."
+    exit 1
+  else
+    /bin/mkdir "`/bin/realpath -q $1`/tcoin/secrets"
+    /bin/chmod 700 "`/bin/realpath -q $1`/tcoin/secrets"
+    /bin/chmod u+s "`/bin/realpath -q $1`/tcoin/secrets"
+    if [ -d "`/bin/realpath -q $1`/tcoin/secrets/pcoin_keys" ]
+    then
+      /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/secrets/pcoin_keys' already exists."
+      exit 1
+    else
+      /bin/mkdir "`/bin/realpath -q $1`/tcoin/secrets/pcoin_keys"
+      /bin/chmod 700 "`/bin/realpath -q $1`/tcoin/secrets/pcoin_keys"
+      /bin/chmod u+s "`/bin/realpath -q $1`/tcoin/secrets/pcoin_keys"
+    fi
+    if [ -e "`/bin/realpath -q $1`/tcoin/secrets/tcoin_codez" ]
+    then
+      /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/secrets/tcoin_codez' already exists."
+      exit 1
+    else
+      /bin/echo "`cat /dev/urandom | b64encode -r . | head -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'` `cat /dev/urandom | b64encode -r . | head -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'`" > "`/bin/realpath -q $1`/tcoin/secrets/tcoin_codez"
+      /bin/chmod 400 "`/bin/realpath -q $1`/tcoin/secrets/tcoin_codez"
+    fi
+  fi
+    if [ -d "`/bin/realpath -q $1`/tcoin/bin" ]
+  then
+    /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/bin' already exists."
+    exit 1
+  else
+    /bin/mkdir "`/bin/realpath -q $1`/tcoin/bin"
+    /bin/chmod 700 "`/bin/realpath -q $1`/tcoin/bin"
+    /bin/chmod u+s "`/bin/realpath -q $1`/tcoin/bin"
+    if [ -e "`/bin/realpath -q $1`/tcoin/bin/scrypt" ]
+    then
+      /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/bin/scrypt' already exists."
+      exit 1
+    else
+      /bin/cp ./scrypt "`/bin/realpath -q $1`/tcoin/bin/scrypt"
+      /bin/chmod 500 "`/bin/realpath -q $1`/tcoin/bin/scrypt"
+    fi
+    if [ -e "`/bin/realpath -q $1`/tcoin/bin/tcoin_defs.cpp" ]
+    then
+      /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/bin/tcoin_defs.cpp' already exists."
+      exit 1
+    else
+      /bin/echo '#define TCOIN_PATH "'`/bin/realpath -q $1`'/tcoin"
+#define TCOIN_MSG_PATH "'`/bin/realpath -q $1`'/tcoin/messages/"
+#define TCOIN_SALT_PATH "'`/bin/realpath -q $1`'/tcoin/salts/"
+#define TCOIN_PASS_PATH "'`/bin/realpath -q $1`'/tcoin/passwords/"
+#define TCOIN_PROG_ACT_PATH "'`/bin/realpath -q $1`'/tcoin/program_accounting/"
+#define PROG_ACT_W_SLASH "program_accounting/"
+#define PCOIN_KEY_PATH_W_SLASH "'`/bin/realpath -q $1`'/tcoin/secrets/pcoin_keys/"
+#define TCOIN_CODEZ_PATH "'`/bin/realpath -q $1`'/tcoin/secrets/tcoin_codez"
+#define TCOIN_BIN_PATH_W_SPACE "'`/bin/realpath -q $2`'/tcoin "
+#define TCOIN_PATH_W_SLASH "'`/bin/realpath -q $1`'/tcoin/"
+#define TCOIN_SCRYPT_PATH "'`/bin/realpath -q $1`'/tcoin/bin/scrypt"
+#define TCOIN_HOST_NAME "'$4'"
+#define KROWBAR_OFF
+#define DA_OFF
+#define MINERCOIN_OFF' > "`/bin/realpath -q $1`/tcoin/bin/tcoin_defs.cpp"
+      /bin/chmod 640 "`/bin/realpath -q $1`/tcoin/bin/tcoin_defs.cpp"
+    fi
+    if [ -e "`/bin/realpath -q $1`/tcoin/bin/pcoin_defs.cpp" ]
+    then
+      /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/bin/pcoin_defs.cpp' already exists."
+      exit 1
+    else
+        /bin/echo '#define TCOIN_PATH "'`/bin/realpath -q $1`'/tcoin"
+#define TCOIN_MSG_PATH "'`/bin/realpath -q $1`'/tcoin/messages/"
+#define TCOIN_SALT_PATH "'`/bin/realpath -q $1`'/tcoin/salts/"
+#define TCOIN_PASS_PATH "'`/bin/realpath -q $1`'/tcoin/passwords/"
+#define TCOIN_PROG_ACT_PATH "'`/bin/realpath -q $1`'/tcoin/program_accounting/"
+#define PROG_ACT_W_SLASH "program_accounting/"
+#define PCOIN_KEY_PATH_W_SLASH "'`/bin/realpath -q $1`'/tcoin/secrets/pcoin_keys/"
+#define LS_PCOIN_KEY_CMD "/bin/ls '`/bin/realpath -q $1`'/tcoin/secrets/pcoin_keys"
+#define TCOIN_CODEZ_PATH "'`/bin/realpath -q $1`'/tcoin/secrets/tcoin_codez"
+#define TCOIN_PATH_W_SLASH "'`/bin/realpath -q $1`'/tcoin/"
+#define TCOIN_SCRYPT_PATH "'`/bin/realpath -q $1`'/tcoin/bin/scrypt"
+#define PCOIN_BIN_PATH "'`/bin/realpath -q $2`'/pcoin"
+#define PCOIN_BIN_PATH_W_SPACE "'`/bin/realpath -q $2`'/pcoin "
+#define KROWBAR_OFF
+#define DA_OFF
+#define MINERCOIN_OFF' > "`/bin/realpath -q $1`/tcoin/bin/pcoin_defs.cpp"
+      /bin/chmod 640 "`/bin/realpath -q $1`/tcoin/bin/pcoin_defs.cpp"
+    fi
+    if [ -e "`/bin/realpath -q $1`/tcoin/bin/tcoin" ]
+    then
+      /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/bin/tcoin' already exists."
+      exit 1
+    else
+      /bin/echo '#!/usr/local/bin/bash
+(/usr/local/bin/g++ -I"'`/bin/realpath -q $1`'/tcoin/bin" "'`/bin/pwd`'/tcoin.cpp" -o "'`/bin/realpath -q $1`'/tcoin/bin/tcoin" -std=c++11) \
+&& (/bin/chmod 550 "'`/bin/realpath -q $1`'/tcoin/bin/tcoin") \
+&& (/bin/chmod u+s "'`/bin/realpath -q $1`'/tcoin/bin/tcoin") \
+&& (([ -f "'`/bin/realpath -q $2`'/tcoin" ] && (/bin/chmod u+w "'`/bin/realpath -q $2`'/tcoin")) || /usr/bin/true) \
+&& (/bin/cp "'`/bin/realpath -q $1`'/tcoin/bin/tcoin" "'`/bin/realpath -q $2`'/tcoin") \
+&& (/bin/chmod 550 "'`/bin/realpath -q $2`'/tcoin") \
+&& (/bin/chmod u+s "'`/bin/realpath -q $2`'/tcoin") \
+&& (/bin/cp "'`/bin/realpath -q $1`'/tcoin/bin/tcoin_defs.cpp" "'`/bin/realpath -q $2`'/tcoin_defs.cpp")' > "`/bin/realpath -q $1`/tcoin/bin/compile_tcoin"
+      /bin/chmod 540 "`/bin/realpath -q $1`/tcoin/bin/compile_tcoin"
+      /bin/echo '#!usr/local/bin/bash
+'`which nano`' "'`/bin/pwd`'/tcoin.cpp"' > "`/bin/realpath -q $1`/tcoin/bin/edit_tcoin"
+      /bin/chmod 540 "`/bin/realpath -q $1`/tcoin/bin/edit_tcoin"
+      /usr/local/bin/bash "`/bin/realpath -q $1`/tcoin/bin/compile_tcoin"
+      /bin/ln -s "`/bin/realpath -q $1`/tcoin/bin/compile_tcoin" ~/"bin/compile_tcoin"
+      /bin/ln -s "`/bin/realpath -q $1`/tcoin/bin/edit_tcoin" ~/"bin/edit_tcoin"
+    fi
+    if [ -e "`/bin/realpath -q $1`/tcoin/bin/pcoin" ]
+    then
+      /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/bin/pcoin' already exists."
+      exit 1
+    else
+      /bin/echo '#!/usr/local/bin/bash
+(/usr/local/bin/g++ -I"'`/bin/realpath -q $1`'/tcoin/bin" "'`/bin/pwd`'/pcoin.cpp" -o "'`/bin/realpath -q $1`'/tcoin/bin/pcoin" -std=c++11) \
+&& (/bin/chmod 550 "'`/bin/realpath -q $1`'/tcoin/bin/pcoin") \
+&& (/bin/chmod u+s "'`/bin/realpath -q $1`'/tcoin/bin/pcoin") \
+&& (([ -f "'`/bin/realpath -q $2`'/pcoin" ] && (/bin/chmod u+w "'`/bin/realpath -q $2`'/pcoin")) || /usr/bin/true) \
+&& (/bin/cp "'`/bin/realpath -q $1`'/tcoin/bin/pcoin" "'`/bin/realpath -q $2`'/pcoin") \
+&& (/bin/chmod 550 "'`/bin/realpath -q $2`'/pcoin") \
+&& (/bin/chmod u+s "'`/bin/realpath -q $2`'/pcoin") \
+&& (/bin/cp "'`/bin/realpath -q $1`'/tcoin/bin/pcoin_defs.cpp" "'`/bin/realpath -q $2`'/pcoin_defs.cpp")' > "`/bin/realpath -q $1`/tcoin/bin/compile_pcoin"
+      /bin/chmod 540 "`/bin/realpath -q $1`/tcoin/bin/compile_pcoin"
+      /bin/echo '#!/usr/local/bin/bash
+'`which nano`' "'`/bin/pwd`'/pcoin.cpp"' > "`/bin/realpath -q $1`/tcoin/bin/edit_pcoin"
+      /bin/chmod 540 "`/bin/realpath -q $1`/tcoin/bin/edit_pcoin"
+      /usr/local/bin/bash "`/bin/realpath -q $1`/tcoin/bin/compile_pcoin"
+      /bin/ln -s "`/bin/realpath -q $1`/tcoin/bin/compile_pcoin" ~/"bin/compile_pcoin"
+      /bin/ln -s "`/bin/realpath -q $1`/tcoin/bin/edit_pcoin" ~/"bin/edit_pcoin"
+    fi
+  fi
+fi
