@@ -141,7 +141,7 @@ else
       /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/bin/scrypt' already exists."
       exit 1
     else
-      /bin/cp ./scrypt "`/bin/realpath -q $1`/tcoin/bin/scrypt"
+      /bin/cp ./scrypt_freebsd "`/bin/realpath -q $1`/tcoin/bin/scrypt"
       /bin/chmod 500 "`/bin/realpath -q $1`/tcoin/bin/scrypt"
     fi
     if [ -e "`/bin/realpath -q $1`/tcoin/bin/tcoin_defs.cpp" ]
