@@ -200,6 +200,7 @@ else
 && (/bin/chmod u+s "'`/bin/realpath -q $1`'/tcoin/bin/tcoin") \
 && (([ -f "'`/bin/realpath -q $2`'/tcoin" ] && (/bin/chmod u+w "'`/bin/realpath -q $2`'/tcoin")) || /usr/bin/true) \
 && (/bin/cp "'`/bin/realpath -q $1`'/tcoin/bin/tcoin" "'`/bin/realpath -q $2`'/tcoin") \
+&& (/usr/bin/chgrp tilde "'`/bin/realpath -q $2`'/tcoin") \
 && (/bin/chmod 550 "'`/bin/realpath -q $2`'/tcoin") \
 && (/bin/chmod u+s "'`/bin/realpath -q $2`'/tcoin") \
 && (/bin/cp "'`/bin/realpath -q $1`'/tcoin/bin/tcoin_defs.cpp" "'`/bin/realpath -q $2`'/tcoin_defs.cpp")' > "`/bin/realpath -q $1`/tcoin/bin/compile_tcoin"
@@ -222,6 +223,7 @@ else
 && (/bin/chmod u+s "'`/bin/realpath -q $1`'/tcoin/bin/pcoin") \
 && (([ -f "'`/bin/realpath -q $2`'/pcoin" ] && (/bin/chmod u+w "'`/bin/realpath -q $2`'/pcoin")) || /usr/bin/true) \
 && (/bin/cp "'`/bin/realpath -q $1`'/tcoin/bin/pcoin" "'`/bin/realpath -q $2`'/pcoin") \
+&& (/usr/bin/chgrp tilde "'`/bin/realpath -q $2`'/pcoin") \
 && (/bin/chmod 550 "'`/bin/realpath -q $2`'/pcoin") \
 && (/bin/chmod u+s "'`/bin/realpath -q $2`'/pcoin") \
 && (/bin/cp "'`/bin/realpath -q $1`'/tcoin/bin/pcoin_defs.cpp" "'`/bin/realpath -q $2`'/pcoin_defs.cpp")' > "`/bin/realpath -q $1`/tcoin/bin/compile_pcoin"
