@@ -38,7 +38,7 @@
 #ifndef KROWBAR_OFF
   #define KROWBAR_SCORE_PATH "/home/krowbar/Code/irc/data/tildescores.txt"
 #endif
-#ifndef TILDEINSTITUTE
+#if !defined(TILDEINSTITUTE) || !defined(TILDEGURU)
   #define WHOAMI_PATH "/usr/bin/whoami"
 #else
   #define WHOAMI_PATH "/usr/bin/getent passwd $(/usr/bin/id -ru) | /usr/bin/cut -d: -f1"
