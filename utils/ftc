@@ -1,0 +1,6 @@
+#!/bin/bash
+
+#ftc -> full tcoin check
+
+
+/usr/bin/diff <(/bin/ls /home/login/tcoin/*.txt | /usr/bin/xargs -n 1 /bin/cat) <(/bin/ls /home/login/tcoin/messages/* | /usr/bin/xargs -n 1 /home/login/bin/mstss)

@@ -1,0 +1,4 @@
+#!/bin/bash
+#Message Tcoin Converter
+(/bin/echo;/bin/cat "$1") | /home/login/bin/message-tcoin-converter.awk - | /bin/sed -e 'H;${x;s/\n\n/\t/g;p;};d' | /usr/bin/awk -F'\t' -v OFS='\t'  '$1 {cmd="/bin/date -d \""$1"\" +%s"; cmd | getline $1; close(cmd)} 1' -
+

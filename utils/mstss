@@ -1,0 +1,3 @@
+#!/bin/bash
+
+(/bin/echo "$2"; /bin/cat "$1") | /home/login/bin/message-sum-tcoin-helper-supersummary.awk -

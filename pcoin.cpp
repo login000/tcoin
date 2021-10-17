@@ -14,7 +14,7 @@
 #include <sys/stat.h>
 #include <ctime>
 #include <unistd.h>
-
+#include "popen2.h"
 //set to 1 to enable some debug std::cout statements
 #define DEBUG 0
 
@@ -222,6 +222,25 @@ std::string exec(const char* cmd) {
             result += buffer.data();
     }
     return result;
+}
+
+std::string exec2(const char* cmd, std::string input) {
+  std::string data_length_str = exec((std::string(cmd) + std::string(PIPED_WORD_COUNT_CMD)).c_str());
+  long long int data_length = strtol_fast(data_length_str.c_str())+1;
+  std::vector <char> buffer;
+  buffer.reserve(data_length);
+  std::string result;
+  files_t *fp = popen2(cmd);
+  if (!fp) throw std::runtime_error("popen2() failed!");
+
+  fputs((input+std::string("\n")).c_str(), fp->in);
+  std::fflush(fp->in);
+
+  while (!feof(fp->out)) {
+      if (fgets(buffer.data(), data_length, fp->out) != nullptr)
+        result += buffer.data();
+  }
+  return result;
 }
 
 long long int get_file_value(const char* file_name)
@@ -1473,10 +1492,17 @@ bool is_number(const char* test_string)
 
 std::string get_username_from_key(std::string &key)
 {
-  const static std::string all_usernames_dot_txt = exec(LS_PCOIN_KEY_CMD);
+  std::ifstream codefin(TCOIN_CODEZ_PATH);
+  char code1[513], code2[513], code3[513];
+  codefin >> code1;
+  codefin >> code2;
+  codefin >> code3;
+  codefin.close();
+  const static std::string all_usernames_dot_txt = exec2((std::string(TCOIN_BIN_PATH_W_SPACE) + std::string("pcoin_list")).c_str(), std::string(code3));
+
   std::istringstream iss(all_usernames_dot_txt);
 
-  std::string word1, word2;
+  std::string word1, word2, program_name("n/a");
   //first word is program username with .txt on the end, second word is key
   while(iss >> word1)
   {
@@ -1492,14 +1518,15 @@ std::string get_username_from_key(std::string &key)
     {
       fin.close();
       delete[] program_key_path;
-      return word1.substr(0, word1.size()-4); //removing .txt from the username returned
+      program_name = word1.substr(0, word1.size()-4); //removing .txt from the username returned
     }
-    fin.close();
-    delete[] program_key_path;
+    else
+    {
+      fin.close();
+      delete[] program_key_path;
+    }
   }
-
-  word1.assign("n/a");
-  return word1;
+  return program_name;
 }
 
 long long int get_internal_balance(const char* username)

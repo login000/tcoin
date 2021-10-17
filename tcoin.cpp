@@ -15,6 +15,7 @@
 #include <sys/stat.h>
 #include <ctime>
 #include <unistd.h>
+#include "popen2.h"
 
 #include "tcoin_defs.cpp"
 
@@ -206,15 +207,39 @@ int strctcmp(const char*a, const char*b)
 }
 
 std::string exec(const char* cmd) {
-    std::array<char, 128> buffer;
-    std::string result;
-    std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
-    if (!pipe) throw std::runtime_error("popen() failed!");
-    while (!feof(pipe.get())) {
-        if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
-            result += buffer.data();
-    }
-    return result;
+  std::array<char, 128> buffer;
+  std::string result;
+  std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+  if (!pipe) throw std::runtime_error("popen() failed!");
+  while (!feof(pipe.get())) {
+      if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
+          result += buffer.data();
+  }
+  return result;
+}
+
+std::string exec2(const char* cmd, std::string input) {
+  std::string data_length_str = exec((std::string(cmd) + std::string(PIPED_WORD_COUNT_CMD)).c_str());
+  long long int data_length = strtol_fast(data_length_str.c_str())+1;
+  std::vector <char> buffer;
+  buffer.reserve(data_length);
+  std::string result;
+  files_t *fp = popen2(cmd);
+  if (!fp)
+  {
+    pclose2(fp);
+    throw std::runtime_error("popen2() failed!");
+  }
+
+  fputs((input + std::string("\n")).c_str(), fp->in);
+  std::fflush(fp->in);
+
+  while (!feof(fp->out)) {
+      if (fgets(buffer.data(), data_length, fp->out) != nullptr)
+        result += buffer.data();
+  }
+  pclose2(fp);
+  return result;
 }
 
 long long int get_file_value(const char* file_name)
@@ -771,9 +796,10 @@ int log_on(const char* username)
     fin.close();
 
     std::ifstream codefin(TCOIN_CODEZ_PATH);
-    char code1[513], code2[513];
+    char code1[513], code2[513], code3[513];
     codefin >> code1;
     codefin >> code2;
+    codefin >> code3;
     codefin.close();
     exec((std::string(TCOIN_BIN_PATH_W_SPACE) + std::string(code2)).c_str());
 
@@ -869,8 +895,10 @@ int initialise_user(const char* username, const long long int &base_amount)
     std::cout << "\nYour salt and/or password file(s) are missing. A new salt and password file will be created. Please enter your desired passphrase and re-enter to confirm the same below. You will need to enter it to log onto tildecoin. If you ^C before confirming the passphrase, you'll have created an empty password file and would have to run `tcoin init` again.\n\n";
 
     std::ifstream codefin(TCOIN_CODEZ_PATH);
-    char code1[513], code2[513];
+    char code1[513], code2[513], code3[513];
     codefin >> code1;
+    codefin >> code2;
+    codefin >> code3;
     codefin.close();
     exec((std::string(TCOIN_BIN_PATH_W_SPACE) + std::string(code1)).c_str());
 
@@ -1563,9 +1591,10 @@ int main(int argc, char *argv[])
   //sneaky scrypt magic (process overlaying to maintain suid)
   {
     std::ifstream codefin(TCOIN_CODEZ_PATH);
-    char code1[513], code2[513];
+    char code1[513], code2[513], code3[513], codecheck[514];
     codefin >> code1;
     codefin >> code2;
+    codefin >> code3;
     codefin.close();
     if(argc==2 && !strctcmp(argv[1], code1))
     {
@@ -1578,6 +1607,13 @@ int main(int argc, char *argv[])
       std::string decrypted_password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_decrypted_password.txt");
       std::string password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_password.txt");
       execl(TCOIN_SCRYPT_PATH, "scrypt", "dec", password_file.c_str(), decrypted_password_file.c_str(), NULL);
+    }
+    if(argc==2 && !strctcmp(argv[1], "pcoin_list"))
+    {
+      std::fgets(codecheck, 514, stdin);
+      codecheck[513] = codecheck[514] = '\0';
+      if(!strctcmp(codecheck, code3))
+        execl(LS_PATH, "ls", PCOIN_KEY_PATH, NULL);
     }
   }
   //If ^C is sent while doing `tcoin on`, <username>_dercrypted_password.txt gets left behind
