@@ -153,7 +153,7 @@ else
       exit 1
     else
       /bin/cp ./popen2.c "`/usr/local/bin/grealpath -s $1`/tcoin/bin/popen2.c"
-      /bin/chmod 500 "`/usr/local/bin/grealpath -s $1`/tcoin/bin/popen2.c"
+      /bin/chmod 440 "`/usr/local/bin/grealpath -s $1`/tcoin/bin/popen2.c"
     fi
     if [ -e "`/usr/local/bin/grealpath -s $1`/tcoin/bin/popen2.h" ]
     then
@@ -161,7 +161,7 @@ else
       exit 1
     else
       /bin/cp ./popen2.h "`/usr/local/bin/grealpath -s $1`/tcoin/bin/popen2.h"
-      /bin/chmod 500 "`/usr/local/bin/grealpath -s $1`/tcoin/bin/popen2.h"
+      /bin/chmod 440 "`/usr/local/bin/grealpath -s $1`/tcoin/bin/popen2.h"
     fi
     if [ -e "`/usr/local/bin/grealpath -s $1`/tcoin/bin/tcoin_defs.cpp" ]
     then

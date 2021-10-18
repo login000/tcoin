@@ -153,15 +153,15 @@ else
       exit 1
     else
       /bin/cp ./popen2.c "`/bin/realpath -q $1`/tcoin/bin/popen2.c"
-      /bin/chmod 500 "`/bin/realpath -q $1`/tcoin/bin/popen2.c"
+      /bin/chmod 440 "`/bin/realpath -q $1`/tcoin/bin/popen2.c"
     fi
     if [ -e "`/bin/realpath -q $1`/tcoin/bin/popen2.h" ]
     then
       /bin/echo "Sorry, '`/bin/realpath -q $1`/tcoin/bin/popen2.h' already exists."
       exit 1
     else
-      /bin/cp ./scrypt_freebsd "`/bin/realpath -q $1`/tcoin/bin/popen2.h"
-      /bin/chmod 500 "`/bin/realpath -q $1`/tcoin/bin/popen2.h"
+      /bin/cp ./popen2.h "`/bin/realpath -q $1`/tcoin/bin/popen2.h"
+      /bin/chmod 440 "`/bin/realpath -q $1`/tcoin/bin/popen2.h"
     fi
     if [ -e "`/bin/realpath -q $1`/tcoin/bin/tcoin_defs.cpp" ]
     then
