@@ -29,6 +29,7 @@
 #define TCOIN_PROG_ACT_PATH "/home/login/tcoin/program_accounting/"
 #define PROG_ACT_W_SLASH "program_accounting/"
 #define PCOIN_KEY_PATH_W_SLASH "/home/login/bin/pcoin_keys/"
+#define PCOIN_NEW_KEY_CMD "/bin/cat /dev/urandom | /usr/bin/base64 | /usr/bin/head -c 64 | /usr/bin/tr '+' '-' | /usr/bin/tr '/' '_'"
 #define LS_PCOIN_KEY_CMD "/bin/ls /home/login/bin/pcoin_keys"
 #define TCOIN_CODEZ_PATH "/home/login/bin/tcoin_codez"
 #define TCOIN_BIN_PATH_W_SPACE "/home/login/bin/tcoin "
@@ -65,6 +66,8 @@
 #define ERR_NEGATIVE_SEND_AMOUNT 2
 #define ERR_INSUFFICIENT_FUNDS 3
 #define ERR_RECEIVER_NOT_FOUND 1
+
+#define ERR_PCOIN_KEY_REFRESH_FAILED 20
 
 #define ERR_IN_GET_INTERNAL_BALANCE -1
 #define ERR_IN_ADD_INTERNAL_BALANCE_GET_INTERNAL_TOTAL_OWED_FAILED -3
@@ -600,6 +603,93 @@ bool program_exists(const char* username)
   }
 
   return return_value;
+}
+
+std::string refresh_pcoin_key()
+{
+  std::string new_key;
+  const std::string username = get_username();
+  char* program_key_path = new char[username.length() + sizeof(PCOIN_KEY_PATH_W_SLASH) + 4]; //sizeof counts NULL char at the end too
+  char* temp_program_key_path = new char[username.length() + sizeof(PCOIN_KEY_PATH_W_SLASH) + 8]; //sizeof counts NULL char at the end too
+  char* temp2_program_key_path = new char[username.length() + sizeof(PCOIN_KEY_PATH_W_SLASH) + 9]; //sizeof counts NULL char at the end too
+
+  std::strcpy(program_key_path, PCOIN_KEY_PATH_W_SLASH);
+  std::strcat(program_key_path, username.c_str());
+  std::strcpy(temp_program_key_path, program_key_path);
+  std::strcpy(temp2_program_key_path, program_key_path);
+  std::strcat(program_key_path, ".txt");
+  std::strcat(temp_program_key_path, "_tmp.txt");
+  std::strcat(temp2_program_key_path, "_tmp2.txt");
+
+  std::ifstream fin(program_key_path);
+
+  if(!fin)
+  {
+    delete[] program_key_path;
+    delete[] temp_program_key_path;
+    delete[] temp2_program_key_path;
+    return std::string("n/a");
+  }
+
+  fin.close();
+
+  if(!std::rename(program_key_path, temp_program_key_path))
+  {
+    chmod(temp_program_key_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+    std::ofstream fin2(temp2_program_key_path);
+
+    if(!fin2)
+    {
+      fin2.close();
+      while(1)
+      {
+        if(!std::rename(temp_program_key_path, program_key_path))
+        {
+          chmod(program_key_path, S_IRUSR & ~S_IWUSR & ~S_IXUSR & ~S_IRWXG & ~S_IRWXO);
+          break;
+        }
+      }
+      delete[] temp2_program_key_path;
+      delete[] temp_program_key_path;
+      delete[] program_key_path;
+      return std::string("n/a");
+    }
+
+    new_key = exec(PCOIN_NEW_KEY_CMD);
+    fin2 << new_key << "\n";
+    fin2.close();
+    chmod(temp2_program_key_path, S_IRUSR & ~S_IWUSR & ~S_IXUSR & ~S_IRWXG & ~S_IRWXO);
+
+    while(1)
+    {
+      if(!std::rename(temp2_program_key_path, program_key_path))
+      {
+        chmod(program_key_path, S_IRUSR & ~S_IWUSR & ~S_IXUSR & ~S_IRWXG & ~S_IRWXO);
+        while(1)
+        {
+          if(!std::remove(temp_program_key_path))
+            break;
+        }
+        break;
+      }
+    }
+    delete[] program_key_path;
+    delete[] temp_program_key_path;
+    delete[] temp2_program_key_path;
+    return new_key;
+  }
+  else
+  {
+    delete[] program_key_path;
+    delete[] temp_program_key_path;
+    delete[] temp2_program_key_path;
+    return std::string("n/a");
+  }
+
+  delete[] program_key_path;
+  delete[] temp_program_key_path;
+  delete[] temp2_program_key_path;
+  return std::string("n/a");
 }
 
 bool username_exists(const char* username)
@@ -1476,8 +1566,9 @@ void help()
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "internal_balance <username>` or `" << PCOIN_BIN_PATH_W_SPACE << "-ib <username>`: print the amount you owe <username>";
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "add_internal_balance <username>` or `" << PCOIN_BIN_PATH_W_SPACE << "-aib <username> <amount>`: add <amount> to the amount you owe <username>";
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "send <username> <amount>` or `" << PCOIN_BIN_PATH_W_SPACE  << "-s <username> <amount>`: send <amount> tildecoins to <username>";
-  std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "send <username> <amount> \"<message>\"`: optionally, include a message to be sent to <username>";
+  std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "send <username> <amount> \"<message>\"` or `" << PCOIN_BIN_PATH_W_SPACE << "-s <username> <amount> \"<message>\"`: optionally, include a message to be sent to <username>";
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "silentsend <username> <amount> [\"<message>\"]`, `" << PCOIN_BIN_PATH_W_SPACE << "send -s <username> <amount> [\"<message>\"]` or `" << PCOIN_BIN_PATH_W_SPACE << "-ss <username> <amount> [\"<message>\"]`: send <amount> tildecoins to <username> with an optional (as indicated by [ and ], which should not be included in the actual comment) message included without printing anything";
+  std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "refresh_key` or `" << PCOIN_BIN_PATH_W_SPACE << "-rk`: generate a new key for your pcoin account and print it";
   std::cout << "\nIn the commands with `<username> <amount>`, switching the two arguments around (i.e., from `<username> <amount>` to `<amount> <username>`) will also work";
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "--help`, `" << PCOIN_BIN_PATH_W_SPACE << "help` or `" << PCOIN_BIN_PATH_W_SPACE << "-h`: print this help text";
   std::cout << "\nSend an email to `login@tilde.town` (tilde.town local email) or `login@tilde.team` (internet-wide email), or `/query login` on IRC to report any errors or request a key for your program.\n\n";
@@ -2076,6 +2167,20 @@ int main(int argc, char *argv[])
     }
     else
       return ERR_SILENTSEND;
+  }
+  else if(!strcmp(argv[1], "refresh_key") || !strcmp(argv[1], "-rk"))
+  {
+    std::string new_key;
+
+    new_key.assign(refresh_pcoin_key());
+
+    if(!new_key.compare("n/a") || new_key.length() != 64)
+    {
+      std::cout << "\nSorry, key was not refreshed.\n\n"; //make sure this is less than 64 characters
+      return ERR_PCOIN_KEY_REFRESH_FAILED;
+    }
+    else
+      std::cout << new_key << "\n";
   }
   else
   {
