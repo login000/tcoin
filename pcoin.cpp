@@ -50,6 +50,7 @@
 #endif
 #ifndef MINERCOIN_OFF
   #define MINERCOIN_CMD_PRE_USERNAME "/bin/grep -oP '(?<=\"~"
+  #define MINERCOIN_CMD_PRE_USERNAME2 "/bin/grep -oP '(?<=\""
   #define MINERCOIN_CMD_POST_USERNAME "\": )[[:digit:]]+' /home/minerobber/Code/minerbot/minercoin.json"
 #endif
 #define USERNAME_LENGTH_LIMIT 25
@@ -1864,9 +1865,22 @@ int main(int argc, char *argv[])
   #endif
 
   #ifndef MINERCOIN_OFF
-  //adding minercoin scores from minerobber to base amount
+  //adding minercoin scores from minerobber to base amount (from "~username" in minerbot)
   {
     std::string command_to_exec = std::string(MINERCOIN_CMD_PRE_USERNAME) + get_username() + std::string(MINERCOIN_CMD_POST_USERNAME);
+    std::string number_of_tildes = exec(command_to_exec.c_str());
+    number_of_tildes.pop_back();
+    //to get rid of the newline at the end
+    if(is_number(number_of_tildes.c_str()))
+      minercoin_amount += strtol100(number_of_tildes.c_str());
+      base_amount += minercoin_amount;
+      //multiplied by 100 to convert tildecoins to centitildecoins, which
+      //is the unit used throughout the program (and converted appropriately when displayed)
+  }
+
+  //adding minercoin scores from minerobber to base amount (from "username" in minerbot)
+  {
+    std::string command_to_exec = std::string(MINERCOIN_CMD_PRE_USERNAME2) + get_username() + std::string(MINERCOIN_CMD_POST_USERNAME);
     std::string number_of_tildes = exec(command_to_exec.c_str());
     number_of_tildes.pop_back();
     //to get rid of the newline at the end
