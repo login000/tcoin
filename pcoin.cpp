@@ -1570,6 +1570,7 @@ void help()
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "send <username> <amount> \"<message>\"` or `" << PCOIN_BIN_PATH_W_SPACE << "-s <username> <amount> \"<message>\"`: optionally, include a message to be sent to <username>";
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "silentsend <username> <amount> [\"<message>\"]`, `" << PCOIN_BIN_PATH_W_SPACE << "send -s <username> <amount> [\"<message>\"]` or `" << PCOIN_BIN_PATH_W_SPACE << "-ss <username> <amount> [\"<message>\"]`: send <amount> tildecoins to <username> with an optional (as indicated by [ and ], which should not be included in the actual comment) message included without printing anything";
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "refresh_key` or `" << PCOIN_BIN_PATH_W_SPACE << "-rk`: generate a new key for your pcoin account and print it";
+  std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "name` or `" << PCOIN_BIN_PATH_W_SPACE << "-n`: print the name on the account";
   std::cout << "\nIn the commands with `<username> <amount>`, switching the two arguments around (i.e., from `<username> <amount>` to `<amount> <username>`) will also work";
   std::cout << "\n`" << PCOIN_BIN_PATH_W_SPACE << "--help`, `" << PCOIN_BIN_PATH_W_SPACE << "help` or `" << PCOIN_BIN_PATH_W_SPACE << "-h`: print this help text";
   std::cout << "\nSend an email to `login@tilde.town` (tilde.town local email) or `login@tilde.team` (internet-wide email), or `/query login` on IRC to report any errors or request a key for your program.\n\n";
@@ -2195,6 +2196,10 @@ int main(int argc, char *argv[])
     }
     else
       std::cout << new_key << "\n";
+  }
+  else if(!strcmp(argv[1], "name") || !strcmp(argv[1], "-n"))
+  {
+    std::cout << get_username() << "\n";
   }
   else
   {
