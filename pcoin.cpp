@@ -43,7 +43,8 @@
 #define LS_HOME_CMD "/bin/ls /home"
 #define BIN_ECHO_CMD "/bin/echo $$"
 #ifndef KROWBAR_OFF
-  #define KROWBAR_SCORE_PATH "/home/krowbar/Code/irc/data/tildescores.txt"
+  #define KROWBAR_SCORE_PATH_OLD "/home/krowbar/Code/irc/data/tildescores.txt"
+  #define KROWBAR_SCORE_PATH "/home/jmjl/dev/juju/data/tildescores.txt"
 #endif
 #ifndef DA_OFF
   #define TROIDO_DACOINS_CMD "cd /home/troido/daily_adventure/client/ && /home/troido/daily_adventure/client/daclient printinfo 2>&1 | /bin/grep -oP '(?<=\"Coins\", )\[[:digit:]]+'"

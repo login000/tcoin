@@ -37,7 +37,8 @@
 #define LS_HOME_CMD "/bin/ls /home"
 #define BIN_ECHO_CMD "/bin/echo $$"
 #ifndef KROWBAR_OFF
-  #define KROWBAR_SCORE_PATH "/home/krowbar/Code/irc/data/tildescores.txt"
+  #define KROWBAR_SCORE_PATH_OLD "/home/krowbar/Code/irc/data/tildescores.txt"
+  #define KROWBAR_SCORE_PATH "/home/jmjl/dev/juju/data/tildescores.txt"
 #endif
 #if !defined(TILDEINSTITUTE) && !defined(TILDEGURU)
   #define WHOAMI_PATH "/usr/bin/whoami"
