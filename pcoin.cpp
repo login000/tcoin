@@ -2179,7 +2179,7 @@ int main(int argc, char *argv[])
       }
       return_value = send(get_username().c_str(), receiver, amount, base_amount, "silent");
       if(!return_value) //send was successful
-        send_message(get_username().c_str(), argv[3], argv[4], strtol100(argv[2]), "silent");
+        send_message(get_username().c_str(), receiver, argv[4], amount, "silent");
     }
     else
       return ERR_SILENTSEND;
