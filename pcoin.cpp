@@ -75,6 +75,7 @@
 #define ERR_IN_ADD_INTERNAL_BALANCE_GET_INTERNAL_TOTAL_OWED_FAILED -3
 #define ERR_ADD_INTERNAL_BALANCE_VALUE_TO_ADD_UNFULFILLABLE_USING_OWN_CURRENT_FUNDS -1
 #define ERR_ADD_INTERNAL_BALANCE_USERNAME_DOESNT_EXIST -2
+#define ERR_ADD_INTERNAL_BALANCE_ADD_TO_SELF -4
 #define ERR_ADD_FILE_VALUE_INSUFFICIENT_FUNDS 1
 #define ERR_ADD_FILE_VALUE_FATAL 999
 #define ERR_IN_GET_INTERNAL_TOTAL_OWED_SELF_PROGRAM_DOESNT_EXIST -1
@@ -96,6 +97,7 @@
 #define ERR_IN_MAIN_ADD_INTERNAL_BALANCE_AMOUNT_LARGER_THAN_COVERABLE_BY_UNOWED_BALANCE 14
 #define ERR_IN_MAIN_ADD_INTERNAL_BALANCE_AMOUNT_MAKING_USER_INTERNAL_BALANCE_NEGATIVE 16
 #define ERR_IN_MAIN_ADD_INTERNAL_BALANCE_NO_SUCH_USERNAME_FOUND 15
+#define ERR_IN_MAIN_ADD_INTERNAL_BALANCE_ADD_TO_SELF 21
 
 void exit_program(const int error_number)
 {
@@ -1681,6 +1683,10 @@ long long int get_internal_total_owed()
 
 int add_internal_balance(const char* username, const long long int value_to_add)
 {
+  if(!strcmp(get_username().c_str(), username))
+  {
+    return ERR_ADD_INTERNAL_BALANCE_ADD_TO_SELF;
+  }
   if(program_exists(get_username().c_str()) && username_exists(username))
   {
     std::string random_string = std::string("rand");
@@ -1988,6 +1994,11 @@ int main(int argc, char *argv[])
       else
         return_value2 = add_internal_balance(argv[3], strtol100(argv[2]));
 
+      if(return_value == ERR_ADD_INTERNAL_BALANCE_ADD_TO_SELF || return_value2 == ERR_ADD_INTERNAL_BALANCE_ADD_TO_SELF) //cannot add to self internal balance
+      {
+        std::cout << "\nSorry, you cannot add to your own internal balance.\n\n";
+        return ERR_ADD_INTERNAL_BALANCE_ADD_TO_SELF;
+      }
       if(return_value == ERR_ADD_INTERNAL_BALANCE_VALUE_TO_ADD_UNFULFILLABLE_USING_OWN_CURRENT_FUNDS || return_value2 == ERR_ADD_INTERNAL_BALANCE_VALUE_TO_ADD_UNFULFILLABLE_USING_OWN_CURRENT_FUNDS) //value_to_add was too large
       {
         std::cout << "\nSorry, the amount was larger than what the program's current unowed balance could cover.\n\n";
