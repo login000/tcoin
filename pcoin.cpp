@@ -43,8 +43,8 @@
 #define LS_HOME_CMD "/bin/ls /home"
 #define BIN_ECHO_CMD "/bin/echo $$"
 #ifndef KROWBAR_OFF
-  #define KROWBAR_SCORE_PATH_OLD "/home/krowbar/Code/irc/data/tildescores.txt"
-  #define KROWBAR_SCORE_PATH "/home/jmjl/dev/juju/data/tildescores.txt"
+  #define KROWBAR_SCORE_PATH "/home/krowbar/Code/irc/data/tildescores.txt"
+  #define JU_SCORE_PATH "/home/jmjl/dev/juju/data/tildescores.txt"
 #endif
 #ifndef DA_OFF
   #define TROIDO_DACOINS_CMD "cd /home/troido/daily_adventure/client/ && /home/troido/daily_adventure/client/daclient printinfo 2>&1 | /bin/grep -oP '(?<=\"Coins\", )\[[:digit:]]+'"
@@ -396,23 +396,24 @@ void cout_formatted_amount(long long int const& amount, char const* appended_cha
 
 long long int base_amount;
 long long int user_amount;
-long long int krowbar_amount; //krowbar's tilde game amount
+long long int krowbar_amount[2]; //krowbar's tilde game amount
 long long int minercoin_amount; //minerobber's !minercoin game amount
 
-void show_breakdown(const long long int &amount0 = 0, char const* amount0_source = "", const long long int &amount1 = 0, char const* amount1_source = "", const long long int &amount2 = 0, char const* amount2_source = "", const long long int &amount3 = 0, char const* amount3_source = "", const long long int &amount4 = 0, char const* amount4_source = "")
+void show_breakdown(const long long int &amount0 = 0, char const* amount0_source = "", const long long int &amount1 = 0, char const* amount1_source = "", const long long int &amount2 = 0, char const* amount2_source = "", const long long int &amount3 = 0, char const* amount3_source = "", const long long int &amount4 = 0, char const* amount4_source = "", const long long int &amount5 = 0, char const* amount5_source = "")
 {
   bool a0 = (amount0 != 0 && strcmp(amount0_source, ""));
   bool a1 = (amount1 != 0 && strcmp(amount1_source, ""));
   bool a2 = (amount2 != 0 && strcmp(amount2_source, ""));
   bool a3 = (amount3 != 0 && strcmp(amount3_source, ""));
   bool a4 = (amount4 != 0 && strcmp(amount4_source, ""));
-  if(a0 || a1 || a2 || a3 || a4)
+  bool a5 = (amount5 != 0 && strcmp(amount5_source, ""));
+  if(a0 || a1 || a2 || a3 || a4 || a5)
   {
     if(a0)
     {
       std::cout << amount0_source << ",";
       cout_formatted_amount(amount0);
-      if(a1 || a2 || a3 || a4)
+      if(a1 || a2 || a3 || a4 || a5)
       {
         std::cout << ";";
       }
@@ -421,7 +422,7 @@ void show_breakdown(const long long int &amount0 = 0, char const* amount0_source
     {
       std::cout << amount1_source << ",";
       cout_formatted_amount(amount1);
-      if(a2 || a3 || a4)
+      if(a2 || a3 || a4 || a5)
       {
         std::cout << ";";
       }
@@ -430,7 +431,7 @@ void show_breakdown(const long long int &amount0 = 0, char const* amount0_source
     {
       std::cout << amount2_source << ",";
       cout_formatted_amount(amount2);
-      if(a3 || a4)
+      if(a3 || a4 || a5)
       {
         std::cout << ";";
       }
@@ -439,7 +440,7 @@ void show_breakdown(const long long int &amount0 = 0, char const* amount0_source
     {
       std::cout << amount3_source << ",";
       cout_formatted_amount(amount3);
-      if(a4)
+      if(a4 || a5)
       {
         std::cout << ";";
       }
@@ -448,6 +449,15 @@ void show_breakdown(const long long int &amount0 = 0, char const* amount0_source
     {
       std::cout << amount4_source << ",";
       cout_formatted_amount(amount4);
+      if(a5)
+      {
+        std::cout << ";";
+      }
+    }
+    if(a5)
+    {
+      std::cout << amount5_source << ",";
+      cout_formatted_amount(amount5);
     }
     std::cout << "\n";
   }
@@ -1828,7 +1838,7 @@ int main(int argc, char *argv[])
   base_amount = 0;
   long long int unaltered_base_amount = base_amount;
   user_amount = 0;
-  krowbar_amount = 0;
+  krowbar_amount[0] = krowbar_amount[1] = 0;
   minercoin_amount = 0;
 
   #ifndef KROWBAR_OFF
@@ -1837,37 +1847,49 @@ int main(int argc, char *argv[])
     std::string line;
     const std::string username = get_username();
     const int username_length = username.length();
-    std::ifstream fin(KROWBAR_SCORE_PATH);
-    while(std::getline(fin, line))
+
+    std::string score_file_path;
+
+    for(int j=0; j<2; ++j)
     {
-      char* line_c_string = new char[line.length()+1];
-      std::strcpy(line_c_string, line.c_str());
+      if(j == 0)
+        score_file_path.assign(KROWBAR_SCORE_PATH);
+      else if(j == 1)
+        score_file_path.assign(JU_SCORE_PATH);
 
-      const int irc_username_length = username_length > USERNAME_LENGTH_LIMIT ? USERNAME_LENGTH_LIMIT : username_length;
+      std::ifstream fin(score_file_path);
 
-      if(!strncasecmp(username.c_str(), line_c_string, irc_username_length)) //username starts with capital letter, but name in database does not
+      while(std::getline(fin, line))
       {
-        char number_of_tildes[21];
-        number_of_tildes[0] = '0'; //just in case the loop below doesn't detect any digits
-        number_of_tildes[1] = '\0';
+        char* line_c_string = new char[line.length()+1];
+        std::strcpy(line_c_string, line.c_str());
 
-        for(int i=0; i < 20; ++i)
+        const int irc_username_length = username_length > USERNAME_LENGTH_LIMIT ? USERNAME_LENGTH_LIMIT : username_length;
+
+        if(!strncasecmp(username.c_str(), line_c_string, irc_username_length)) //username starts with capital letter, but name in database does not
         {
-          if(std::isdigit(line_c_string[irc_username_length+3+i]))
-            number_of_tildes[i] = line_c_string[irc_username_length+3+i];
-          else
+          char number_of_tildes[21];
+          number_of_tildes[0] = '0'; //just in case the loop below doesn't detect any digits
+          number_of_tildes[1] = '\0';
+
+          for(int i=0; i < 20; ++i)
           {
-            number_of_tildes[i] = '\0'; //manually terminating the string
-            break;
+            if(std::isdigit(line_c_string[irc_username_length+3+i]))
+              number_of_tildes[i] = line_c_string[irc_username_length+3+i];
+            else
+            {
+              number_of_tildes[i] = '\0'; //manually terminating the string
+              break;
+            }
           }
+          number_of_tildes[20] = '\0'; //incase the number overflows 20 characters
+          krowbar_amount[j] += strtol100(number_of_tildes);
+          base_amount += krowbar_amount[j];
+          //multiplied by 100 inside strtol100() to convert tildecoins to centitildecoins, which
+          //is the unit used throughout the program (and converted appropriately when displayed)
         }
-        number_of_tildes[20] = '\0'; //incase the number overflows 20 characters
-        krowbar_amount += strtol100(number_of_tildes);
-        base_amount += krowbar_amount;
-        //multiplied by 100 inside strtol100() to convert tildecoins to centitildecoins, which
-        //is the unit used throughout the program (and converted appropriately when displayed)
+        delete[] line_c_string;
       }
-      delete[] line_c_string;
     }
   }
   #endif
@@ -1915,7 +1937,7 @@ int main(int argc, char *argv[])
   {
     std::cout << "total,";
     cout_formatted_amount(total_amount, ";", ";");
-    show_breakdown(unaltered_base_amount, "baseamount", user_amount, "transfers", krowbar_amount, "tildegame", minercoin_amount, "minercoin");
+    show_breakdown(unaltered_base_amount, "baseamount", user_amount, "transfers", krowbar_amount[0], "tildegame", krowbar_amount[1], "jugame", minercoin_amount, "minercoin");
   }
   else if(!strcmp(argv[1], "messages") || !strcmp(argv[1], "-m"))
   {
