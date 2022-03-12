@@ -358,7 +358,7 @@ std::string get_username()
 {
   return global_username;
 }
-int set_username(std::string &username)
+int set_username(const std::string &username)
 {
   global_username.assign(username);
   return 0;
@@ -397,7 +397,7 @@ void cout_formatted_amount(long long int const& amount, char const* appended_cha
 long long int base_amount;
 long long int user_amount;
 long long int krowbar_amount[2]; //krowbar's tilde game amount
-long long int minercoin_amount; //minerobber's !minercoin game amount
+long long int minercoin_amount[2]; //minerobber's !minercoin game amount (tilded ~username entry and non-tilded username entry, both)
 
 void show_breakdown(const long long int &amount0 = 0, char const* amount0_source = "", const long long int &amount1 = 0, char const* amount1_source = "", const long long int &amount2 = 0, char const* amount2_source = "", const long long int &amount3 = 0, char const* amount3_source = "", const long long int &amount4 = 0, char const* amount4_source = "", const long long int &amount5 = 0, char const* amount5_source = "")
 {
@@ -1839,7 +1839,7 @@ int main(int argc, char *argv[])
   long long int unaltered_base_amount = base_amount;
   user_amount = 0;
   krowbar_amount[0] = krowbar_amount[1] = 0;
-  minercoin_amount = 0;
+  minercoin_amount[0] = minercoin_amount[1] = 0;
 
   #ifndef KROWBAR_OFF
   //adding tildebot scores from krowbar to base amount
@@ -1894,31 +1894,38 @@ int main(int argc, char *argv[])
   }
   #endif
 
-  #ifndef MINERCOIN_OFF
-  //adding minercoin scores from minerobber to base amount (from "~username" in minerbot)
-  {
-    std::string command_to_exec = std::string(MINERCOIN_CMD_PRE_USERNAME) + get_username() + std::string(MINERCOIN_CMD_POST_USERNAME);
-    std::string number_of_tildes = exec(command_to_exec.c_str());
-    number_of_tildes.pop_back();
-    //to get rid of the newline at the end
-    if(is_number(number_of_tildes.c_str()))
-      minercoin_amount += strtol100(number_of_tildes.c_str());
-      base_amount += minercoin_amount;
-      //multiplied by 100 to convert tildecoins to centitildecoins, which
-      //is the unit used throughout the program (and converted appropriately when displayed)
-  }
+  #if DEBUG
+    std::string debug_string("");
+  #endif
 
-  //adding minercoin scores from minerobber to base amount (from "username" in minerbot)
+  #ifndef MINERCOIN_OFF
   {
-    std::string command_to_exec = std::string(MINERCOIN_CMD_PRE_USERNAME2) + get_username() + std::string(MINERCOIN_CMD_POST_USERNAME);
-    std::string number_of_tildes = exec(command_to_exec.c_str());
-    number_of_tildes.pop_back();
-    //to get rid of the newline at the end
-    if(is_number(number_of_tildes.c_str()))
-      minercoin_amount += strtol100(number_of_tildes.c_str());
-      base_amount += minercoin_amount;
+    std::string command_to_exec, minercoin_cmd_pre_username, number_of_tildes, username(get_username());
+    username.at(0) = username.at(0)+'a'-'A';
+    const std::string minercoin_cmd_post_username(MINERCOIN_CMD_POST_USERNAME), lowercase_username(username);
+    //adding minercoin scores from minerobber to base amount (from "~username" and "username", both, in minerbot)
+    #if DEBUG
+      debug_string += lowercase_username;
+    #endif
+    for(int i=0; i<2; ++i)
+    {
+      if(i == 0)
+        minercoin_cmd_pre_username.assign(MINERCOIN_CMD_PRE_USERNAME);
+      else if(i == 1)
+        minercoin_cmd_pre_username.assign(MINERCOIN_CMD_PRE_USERNAME2);
+
+      command_to_exec = minercoin_cmd_pre_username + lowercase_username + minercoin_cmd_post_username;
+      number_of_tildes = exec(command_to_exec.c_str());
+      number_of_tildes.pop_back();
+      //to get rid of the newline at the end
+      if(is_number(number_of_tildes.c_str()))
+      {
+        minercoin_amount[i] += strtol100(number_of_tildes.c_str());
+        base_amount += minercoin_amount[i];
+      }
       //multiplied by 100 to convert tildecoins to centitildecoins, which
       //is the unit used throughout the program (and converted appropriately when displayed)
+    }
   }
   #endif
 
@@ -1937,8 +1944,14 @@ int main(int argc, char *argv[])
   {
     std::cout << "total,";
     cout_formatted_amount(total_amount, ";", ";");
-    show_breakdown(unaltered_base_amount, "baseamount", user_amount, "transfers", krowbar_amount[0], "tildegame", krowbar_amount[1], "jugame", minercoin_amount, "minercoin");
+    show_breakdown(unaltered_base_amount, "baseamount", user_amount, "transfers", krowbar_amount[0], "tildegame", krowbar_amount[1], "jugame", minercoin_amount[0]+minercoin_amount[1], "minercoingame");
   }
+  #if DEBUG
+    else if(!strcmp(argv[1], "debug_string"))
+    {
+      std::cout << debug_string;
+    }
+  #endif
   else if(!strcmp(argv[1], "messages") || !strcmp(argv[1], "-m"))
   {
     double number_of_messages = 0.0;

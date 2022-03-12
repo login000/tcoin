@@ -392,7 +392,7 @@ long long int base_amount;
 long long int user_amount;
 long long int krowbar_amount[2]; //krowbar's and ju's tilde game amount
 long long int da_amount; //troido's daily adventure amount
-long long int minercoin_amount; //minerbot's minercoin game amount
+long long int minercoin_amount[2]; //minerbot's minercoin game amount (tilded username (~username) and non-tilded username (username))
 
 void show_breakdown(const long long int &amount0 = 0, char const* amount0_source = "", const long long int &amount1 = 0, char const* amount1_source = "", const long long int &amount2 = 0, char const* amount2_source = "", const long long int &amount3 = 0, char const* amount3_source = "", const long long int &amount4 = 0, char const* amount4_source = "", const long long int &amount5 = 0, char const* amount5_source = "")
 {
@@ -465,7 +465,7 @@ void show_balance(char const* username, const long long int &amount, const long 
   cout_formatted_amount(amount, " tildecoins", " tildecoin");
   std::cout << " to your name.\n\n";
 
-  show_breakdown(amount0, amount0_source, amount1, amount1_source, amount2, amount2_source, amount3, amount3_source, amount4, amount4_source);
+  show_breakdown(amount0, amount0_source, amount1, amount1_source, amount2, amount2_source, amount3, amount3_source, amount4, amount4_source, amount5, amount5_source);
 
   std::cout << "\nThe command to send tildecoins to other users is `tcoin send <username> <amount>` or `tcoin -s <username> <amount>`.";
   std::cout << "\nThe command to log out of tildecoin is `tcoin off`.\n\n";
@@ -1712,29 +1712,29 @@ int main(int argc, char *argv[])
   #endif
 
   #ifndef MINERCOIN_OFF
-  //adding minercoin scores from minerobber to base amount (from "~username" entry in minerbot)
   {
-    std::string command_to_exec = std::string(MINERCOIN_CMD_PRE_USERNAME) + get_username() + std::string(MINERCOIN_CMD_POST_USERNAME);
-    std::string number_of_tildes = exec(command_to_exec.c_str());
-    number_of_tildes.pop_back();
-    //to get rid of the newline at the end
-    if(is_number(number_of_tildes.c_str()))
-      minercoin_amount += strtol100(number_of_tildes.c_str());
-      base_amount += minercoin_amount;
-      //multiplied by 100 to convert tildecoins to centitildecoins, which
-      //is the unit used throughout the program (and converted appropriately when displayed)
-  }
-  //adding minercoin scores from minerobber to base amount (from "username" entry in minerbot)
-  {
-    std::string command_to_exec = std::string(MINERCOIN_CMD_PRE_USERNAME2) + get_username() + std::string(MINERCOIN_CMD_POST_USERNAME);
-    std::string number_of_tildes = exec(command_to_exec.c_str());
-    number_of_tildes.pop_back();
-    //to get rid of the newline at the end
-    if(is_number(number_of_tildes.c_str()))
-      minercoin_amount += strtol100(number_of_tildes.c_str());
-      base_amount += minercoin_amount;
-      //multiplied by 100 to convert tildecoins to centitildecoins, which
-      //is the unit used throughout the program (and converted appropriately when displayed)
+    std::string minercoin_cmd_pre_username, command_to_exec, number_of_tildes, minercoin_cmd_post_username(MINERCOIN_CMD_POST_USERNAME);
+
+    //adding minercoin scores from minerobber to base amount (from "~username" and "username" entries in minerbot)
+    for(int i=0; i < 2; ++i)
+    {
+      if(i == 0)
+        minercoin_cmd_pre_username.assign(MINERCOIN_CMD_PRE_USERNAME);
+      else if(i == 1)
+        minercoin_cmd_pre_username.assign(MINERCOIN_CMD_PRE_USERNAME2);
+
+      command_to_exec = minercoin_cmd_pre_username + get_username() + minercoin_cmd_post_username;
+      number_of_tildes = exec(command_to_exec.c_str());
+      number_of_tildes.pop_back();
+      //to get rid of the newline at the end
+      if(is_number(number_of_tildes.c_str()))
+      {
+        minercoin_amount[i] = strtol100(number_of_tildes.c_str());
+        base_amount += minercoin_amount[i];
+        //multiplied by 100 to convert tildecoins to centitildecoins, which
+        //is the unit used throughout the program (and converted appropriately when displayed)
+      }
+    }
   }
   #endif
   srand((long int)(std::time(NULL)) + strtol_fast(exec(BIN_ECHO_CMD).c_str()));
@@ -1775,13 +1775,13 @@ int main(int argc, char *argv[])
   {
     //show last 10 messages
     show_messages_tail(get_username().c_str(), 10);
-    show_balance(get_username().c_str(), total_amount, unaltered_base_amount, "base amount", user_amount, "transfers", krowbar_amount[0], "tilde game", krowbar_amount[1], "ju game", da_amount, "daily-adventure game", minercoin_amount, "MinerCoin game");
+    show_balance(get_username().c_str(), total_amount, unaltered_base_amount, "base amount", user_amount, "transfers", krowbar_amount[0], "tilde game", krowbar_amount[1], "ju game", da_amount, "daily-adventure game", minercoin_amount[0]+minercoin_amount[1], "MinerCoin game");
   }
   else if(!strcmp(argv[1], "breakdown") || !strcmp(argv[1], "-bd"))
   {
     std::cout << "Total balance: ";
     cout_formatted_amount(total_amount, " tildecoins\n", " tildecoin\n");
-    show_breakdown(unaltered_base_amount, "base amount", user_amount, "transfers", krowbar_amount[0], "tilde game", krowbar_amount[1], "ju game", da_amount, "daily-adventure game", minercoin_amount, "MinerCoin game");
+    show_breakdown(unaltered_base_amount, "base amount", user_amount, "transfers", krowbar_amount[0], "tilde game", krowbar_amount[1], "ju game", da_amount, "daily-adventure game", minercoin_amount[0]+minercoin_amount[1], "MinerCoin game");
   }
   else if(!strcmp(argv[1], "balance") || !strcmp(argv[1], "-b"))
     cout_formatted_amount(total_amount, "\n");
