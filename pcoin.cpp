@@ -86,6 +86,7 @@
 #define ERR_SEND_MESSAGE_SENDER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL 102
 #define ERR_SEND_MESSAGE_SENDER_PROGRAM_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL 104
 
+#define ERR_KEY_EMPTY 22
 #define ERR_KEY_NOT_IN_USE 9
 #define ERR_NO_ARGS 8
 #define ERR_IN_MAIN_GET_INTERNAL_TOTAL_OWED_FAILED 18
@@ -1824,6 +1825,12 @@ int main(int argc, char *argv[])
     std::string key;
     std::string program_username;
     std::getline(std::cin, key);
+
+    if(!key.compare(""))
+    {
+      std::cout << "\nSorry, you incorrectly specified an empty key.\n\n";
+      return ERR_KEY_EMPTY;
+    }
 
     program_username.assign(get_username_from_key(key));
 
