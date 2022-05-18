@@ -262,5 +262,9 @@ else
       /bin/ln -s "`/usr/local/bin/grealpath -s $1`/tcoin/bin/compile_pcoin" ~/"bin/compile_pcoin"
       /bin/ln -s "`/usr/local/bin/grealpath -s $1`/tcoin/bin/edit_pcoin" ~/"bin/edit_pcoin"
     fi
+    /bin/echo '#!/usr/local/bin/bash
+'`which nano`' "'`/bin/pwd`'/pcoin.cpp" "'`/bin/pwd`'/tcoin.cpp"' > "`/usr/local/bin/grealpath -s $1`/tcoin/bin/edit_ptcoin"
+    /bin/chmod 540 "`/usr/local/bin/grealpath -s $1`/tcoin/bin/edit_ptcoin"
+    /bin/ln -s "`/usr/local/bin/grealpath -s $1`/tcoin/bin/edit_ptcoin" ~/"bin/edit_ptcoin"
   fi
 fi

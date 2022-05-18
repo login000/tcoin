@@ -259,5 +259,9 @@ else
       /bin/ln -s "`/usr/bin/realpath -s $1`/tcoin/bin/compile_pcoin" ~/"bin/compile_pcoin"
       /bin/ln -s "`/usr/bin/realpath -s $1`/tcoin/bin/edit_pcoin" ~/"bin/edit_pcoin"
     fi
+    /bin/echo '#!/bin/bash
+'`which nano`' "'`/bin/pwd`'/pcoin.cpp" "'`/bin/pwd`'/tcoin.cpp"' > "`/usr/bin/realpath -s $1`/tcoin/bin/edit_ptcoin"
+    /bin/chmod 540 "`/usr/bin/realpath -s $1`/tcoin/bin/edit_ptcoin"
+    /bin/ln -s "`/usr/bin/realpath -s $1`/tcoin/bin/edit_ptcoin" ~/"bin/edit_ptcoin"
   fi
 fi

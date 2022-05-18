@@ -221,19 +221,43 @@ int strctcmp(const char*a, const char*b)
 }
 
 std::string exec(const char* cmd) {
+  int i=0;
+  do
+  {
     std::array<char, 128> buffer;
     std::string result;
-    std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
-    if (!pipe) throw std::runtime_error("popen() failed!");
-    while (!feof(pipe.get())) {
-        if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
-            result += buffer.data();
+    try
+    {
+      std::shared_ptr<FILE> pipe(popen(cmd, "r"), pclose);
+      if (!pipe)
+      {
+        ++i;
+        std::cout << "popen() failed - " << i << std::endl;
+        continue;
+      }
+
+      while (!feof(pipe.get())) {
+          if (fgets(buffer.data(), 128, pipe.get()) != nullptr)
+              result += buffer.data();
+      }
+      return result;
     }
-    return result;
+    catch (const std::exception& e)
+    {
+      ++i;
+      std::cout << "popen() failed - " << i << " (exception " << e.what() << ")" << std::endl;
+      continue;
+    }
+  } while(i < 100);
+
+  throw std::runtime_error("popen() failed!");
+  return std::string(""); //dummy line, never executes
 }
 
 std::string exec2(const char* cmd, std::string input) {
-  std::string data_length_str = exec((std::string(cmd) + std::string(PIPED_WORD_COUNT_CMD)).c_str());
+  std::string data_length_cmd_str = std::string(cmd) + std::string(PIPED_WORD_COUNT_CMD);
+  const char* data_length_cmd_cstr = data_length_cmd_str.c_str();
+  std::string data_length_str = exec(data_length_cmd_cstr);
   long long int data_length = strtol_fast(data_length_str.c_str())+1;
   std::vector <char> buffer;
   buffer.reserve(data_length);
@@ -248,6 +272,7 @@ std::string exec2(const char* cmd, std::string input) {
       if (fgets(buffer.data(), data_length, fp->out) != nullptr)
         result += buffer.data();
   }
+  pclose2(fp);
   return result;
 }
 
