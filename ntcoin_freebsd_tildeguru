@@ -235,7 +235,7 @@ else
 && (/bin/cp "'`/bin/realpath -q $1`'/tcoin/bin/tcoin_defs.cpp" "'`/bin/realpath -q $2`'/tcoin_defs.cpp")' > "`/bin/realpath -q $1`/tcoin/bin/compile_tcoin"
       /bin/chmod 540 "`/bin/realpath -q $1`/tcoin/bin/compile_tcoin"
       /bin/echo '#!/usr/local/bin/bash
-'`which nano`' "'`/bin/pwd`'/tcoin.cpp"' > "`/bin/realpath -q $1`/tcoin/bin/edit_tcoin"
+'\$EDITOR' "'`/bin/pwd`'/tcoin.cpp"' > "`/bin/realpath -q $1`/tcoin/bin/edit_tcoin"
       /bin/chmod 540 "`/bin/realpath -q $1`/tcoin/bin/edit_tcoin"
       /usr/local/bin/bash "`/bin/realpath -q $1`/tcoin/bin/compile_tcoin"
       /bin/ln -s "`/bin/realpath -q $1`/tcoin/bin/compile_tcoin" ~/"bin/compile_tcoin"
@@ -258,14 +258,14 @@ else
 && (/bin/cp "'`/bin/realpath -q $1`'/tcoin/bin/pcoin_defs.cpp" "'`/bin/realpath -q $2`'/pcoin_defs.cpp")' > "`/bin/realpath -q $1`/tcoin/bin/compile_pcoin"
       /bin/chmod 540 "`/bin/realpath -q $1`/tcoin/bin/compile_pcoin"
       /bin/echo '#!/usr/local/bin/bash
-'`which nano`' "'`/bin/pwd`'/pcoin.cpp"' > "`/bin/realpath -q $1`/tcoin/bin/edit_pcoin"
+'\$EDITOR' "'`/bin/pwd`'/pcoin.cpp"' > "`/bin/realpath -q $1`/tcoin/bin/edit_pcoin"
       /bin/chmod 540 "`/bin/realpath -q $1`/tcoin/bin/edit_pcoin"
       /usr/local/bin/bash "`/bin/realpath -q $1`/tcoin/bin/compile_pcoin"
       /bin/ln -s "`/bin/realpath -q $1`/tcoin/bin/compile_pcoin" ~/"bin/compile_pcoin"
       /bin/ln -s "`/bin/realpath -q $1`/tcoin/bin/edit_pcoin" ~/"bin/edit_pcoin"
     fi
     /bin/echo '#!/usr/local/bin/bash
-'`which nano`' "'`/bin/pwd`'/pcoin.cpp" "'`/bin/pwd`'/tcoin.cpp"' > "`/bin/realpath -q $1`/tcoin/bin/edit_ptcoin"
+'\$EDITOR' "'`/bin/pwd`'/pcoin.cpp" "'`/bin/pwd`'/tcoin.cpp"' > "`/bin/realpath -q $1`/tcoin/bin/edit_ptcoin"
     /bin/chmod 540 "`/bin/realpath -q $1`/tcoin/bin/edit_ptcoin"
     /bin/ln -s "`/bin/realpath -q $1`/tcoin/bin/edit_ptcoin" ~/"bin/edit_ptcoin"
   fi
