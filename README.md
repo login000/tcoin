@@ -12,7 +12,7 @@ Currency simulator on tilde.town and other tildeboxes on tildeverse.org
     * `d`: a host name (in quotation marks, e.g., d = "tilde.town") that will appear in `tcoin --help`.
 ## Instructions to create program accounts
 1. Run `b/npcoin a` as the service user in the parent directory of the `tcoin` folder, i.e., if the `tcoin` folder is in directory with absolute path `x`, then run `cd x; b/npcoin a`. Here, `a` is the name of the program account you want to create, and `b` is the absolute path to the `tcoin` repository that contains the `npcoin` script. Program accounts should start with a capital letter (e.g., `My_program_account` or `My-program-account`).
-2. Add a line (ending with one newline character) to `tcoin/secrets/pcoin_keys` in the following format (assuming the name of the program is `My_program_account`):
-`My_program_account <a 64-character random alphanumeric (either all lowercase, or mixed-case will also work) string>`
+2. Create a file in the `tcoin/secrets/pcoin_keys/` directory with the following name: `My_program_account.txt` (assuming the name of the program is `My_program_account`) and add the following newline-terminated line to it:
+`<a 64-character random alphanumeric (either all lowercase, or mixed-case will also work) string>`
 3. The string will be the key that the program uses to access and operate its account, and must be given to the requester of the program account securely (and currently, manually). I usually use random.org to generate these 64-character strings because I don't trust pseudorandom number generators (even if they are cryptographically-secure pseudorandom number generators). Anybody who can guess a key can use that program's account.
 4. Program-account creation is currently not automated because of concerns about name-squatting and similarly-named program names.
