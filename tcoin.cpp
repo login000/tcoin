@@ -1631,13 +1631,13 @@ int main(int argc, char *argv[])
     {
       std::string salt_file = std::string(TCOIN_SALT_PATH) + get_username() + std::string("_salt.txt");
       std::string password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_password.txt");
-      execl(TCOIN_SCRYPT_PATH, "scrypt", "enc", "-m", "0.25", "-t", "10", salt_file.c_str(), password_file.c_str(), NULL);
+      execl(TCOIN_SCRYPT_PATH, "scrypt", "enc", "-m", "0.125", "-t", "5", salt_file.c_str(), password_file.c_str(), NULL);
     }
     if(argc==2 && !strctcmp(argv[1], code2))
     {
       std::string decrypted_password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_decrypted_password.txt");
       std::string password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_password.txt");
-      execl(TCOIN_SCRYPT_PATH, "scrypt", "dec", password_file.c_str(), decrypted_password_file.c_str(), NULL);
+      execl(TCOIN_SCRYPT_PATH, "scrypt", "dec", "-t", "15", password_file.c_str(), decrypted_password_file.c_str(), NULL);
     }
     if(argc==2 && !strctcmp(argv[1], "pcoin_list"))
     {
