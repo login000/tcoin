@@ -1692,7 +1692,9 @@ int main(int argc, char *argv[])
 
           for(int i=0; i < 20; ++i)
           {
-            if(std::isdigit(line_c_string[irc_username_length+3+i]))
+            if(std::isdigit(line_c_string[irc_username_length+3+i])
+            || line_c_string[irc_username_length+3+i] == '-'
+            || line_c_string[irc_username_length+3+i] == '.')
               number_of_tildes[i] = line_c_string[irc_username_length+3+i];
             else
             {
