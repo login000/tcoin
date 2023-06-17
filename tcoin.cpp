@@ -1661,6 +1661,7 @@ int main(int argc, char *argv[])
 
   //adding tildebot scores from krowbar to base amount
   #ifndef KROWBAR_OFF
+  if(!user_is_locked(get_username().c_str()))
   {
     std::string line;
     const std::string username = get_username();
@@ -1720,6 +1721,7 @@ int main(int argc, char *argv[])
 
   #ifndef DA_OFF
   //adding daily-adventure scores from troido to base amount
+  if(!user_is_locked(get_username().c_str()))
   {
     std::string number_of_tildes = exec(TROIDO_DACOINS_CMD);
     number_of_tildes.pop_back();
@@ -1733,6 +1735,7 @@ int main(int argc, char *argv[])
   #endif
 
   #ifndef MINERCOIN_OFF
+  if(!user_is_locked(get_username().c_str()))
   {
     std::string minercoin_cmd_pre_username, command_to_exec, number_of_tildes, minercoin_cmd_post_username(MINERCOIN_CMD_POST_USERNAME);
 
