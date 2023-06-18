@@ -47,7 +47,7 @@ else
     /bin/echo "Sorry, './tcoin/program_accounting/${@^}/_MESSAGES.txt' already exists."
     exit 1
   else
-    /bin/echo "0" > "./tcoin/program_accounting/${@^}/_MESSAGES.txt"
+    /bin/echo "" > "./tcoin/program_accounting/${@^}/_MESSAGES.txt"
     /bin/chmod 600 "./tcoin/program_accounting/${@^}/_MESSAGES.txt"
   fi
 fi
