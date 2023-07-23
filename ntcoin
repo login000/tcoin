@@ -29,6 +29,8 @@ then
 #define TCOIN_SCRYPT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/scrypt"
 #define PCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $2`'/pcoin "
 #define TCOIN_HOST_NAME "'$3'"
+#define TCOIN_ERR_CONTACT_EMAIL "login@tilde.town (town-only) or login@tilde.team (internet-wide)"
+#define TCOIN_PASS_RESET_CONTACT_EMAIL "`login@tilde.town` (tilde.town local email) or `login@tilde.team` (internet-wide email), or `/query login` on IRC"
 #define KROWBAR_OFF
 #define DA_OFF
 #define MINERCOIN_OFF'
@@ -183,6 +185,8 @@ else
 #define TCOIN_PATH_W_SLASH "'`/usr/bin/realpath -s $1`'/tcoin/"
 #define TCOIN_SCRYPT_PATH "'`/usr/bin/realpath -s $1`'/tcoin/bin/scrypt"
 #define TCOIN_HOST_NAME "'$4'"
+#define TCOIN_ERR_CONTACT_EMAIL "login@tilde.town (town-only) or login@tilde.team (internet-wide)"
+#define TCOIN_PASS_RESET_CONTACT_EMAIL "`login@tilde.town` (tilde.town local email) or `login@tilde.team` (internet-wide email), or `/query login` on IRC"
 #define KROWBAR_OFF
 #define DA_OFF
 #define MINERCOIN_OFF' > "`/usr/bin/realpath -s $1`/tcoin/bin/tcoin_defs.cpp"
@@ -210,6 +214,8 @@ else
 #define PCOIN_BIN_PATH "'`/usr/bin/realpath -s $2`'/pcoin"
 #define TCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $2`'/tcoin "
 #define PCOIN_BIN_PATH_W_SPACE "'`/usr/bin/realpath -s $2`'/pcoin "
+#define TCOIN_ERR_CONTACT_EMAIL "login@tilde.town (town-only) or login@tilde.team (internet-wide)"
+#define TCOIN_PASS_RESET_CONTACT_EMAIL "`login@tilde.town` (tilde.town local email) or `login@tilde.team` (internet-wide email), or `/query login` on IRC"
 #define KROWBAR_OFF
 #define DA_OFF
 #define MINERCOIN_OFF' > "`/usr/bin/realpath -s $1`/tcoin/bin/pcoin_defs.cpp"
