@@ -84,7 +84,7 @@
 #define ERR_SEND_MESSAGE_RECEIVER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL 101
 #define ERR_SEND_MESSAGE_PROGRAM_RECEIVER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL 103
 #define ERR_SEND_MESSAGE_SENDER_MSG_FILE_UNABLE_TO_BE_UPDATED_FATAL 102
-
+#define ERR_USER_IS_BLOCKED 105
 
 void exit_program(const int error_number)
 {
@@ -1324,6 +1324,14 @@ bool user_is_locked(const char* username)
   return true;
 }
 
+bool user_is_blocked(const char* username)
+{
+  std::ifstream fin((std::string(TCOIN_PATH_W_SLASH) + std::string(username) + std::string("_blocked.txt")).c_str());
+  if(!fin)
+    return false;
+  return true;
+}
+
 int send(const char* sender_username, const char* receiver_username, const long long int &amount_to_send, const long long int &base_amount, const char* option)
 {
   int final_return_value = 0;
@@ -1619,6 +1627,11 @@ bool message_is_long(const char* test_string)
 
 int main(int argc, char *argv[])
 {
+  //quick exit if user is blocked
+  if(user_is_blocked(get_username().c_str()))
+  {
+    return ERR_USER_IS_BLOCKED;
+  }
   //sneaky scrypt magic (process overlaying to maintain suid)
   {
     std::ifstream codefin(TCOIN_CODEZ_PATH);
