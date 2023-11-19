@@ -377,6 +377,59 @@ std::string get_username()
   return username;
 }
 
+void num_stream_thousands_sep(std::ostringstream& ss, long long int const& amount, char sep=',')
+{
+  std::ostringstream rev;
+  long long int reduced_amount = amount/1000;
+  int residue = amount % 1000;
+  bool residue_gte_100 = residue >= 100;
+  bool residue_gte_10 = residue >= 10;
+  bool residue_gte_1 = residue >= 1;;
+
+  int num_residue_digits = residue_gte_100 + residue_gte_10 + residue_gte_1;
+
+  int mini_reduced_amount = amount/10;
+  int mini_residue = amount % 10;
+
+  do
+  {
+    for(int i=0; i<num_residue_digits; ++i)
+    {
+      rev << mini_residue;
+      mini_residue = mini_reduced_amount % 10;
+      mini_reduced_amount /= 10;
+    }
+    for(int i=num_residue_digits; i<3; ++i)
+    {
+      rev << 0;
+    }
+
+    if(reduced_amount > 0)
+      rev << sep;
+
+    residue = reduced_amount % 1000;
+    residue_gte_100 = residue >= 100;
+    residue_gte_10 = residue >= 10;
+    residue_gte_1 = residue >= 1;
+
+    num_residue_digits = residue_gte_100 + residue_gte_10 + residue_gte_1;
+    mini_reduced_amount = reduced_amount/10;
+    mini_residue = reduced_amount % 10;
+    reduced_amount = reduced_amount/1000;
+  } while(reduced_amount > 0);
+
+  for(int i=0; i<num_residue_digits; ++i)
+  {
+    rev << mini_residue;
+    mini_residue = mini_reduced_amount % 10;
+    mini_reduced_amount /= 10;
+  }
+
+  std::string rev_str = rev.str();
+  std::reverse(rev_str.begin(), rev_str.end());
+  ss << rev_str;
+}
+
 std::string formatted_amount(long long int const& amount, char const* appended_chars_default = "", char const* appended_chars_singular = "")
 {
   std::ostringstream ss;
@@ -384,13 +437,23 @@ std::string formatted_amount(long long int const& amount, char const* appended_c
   bool is_non_negative = amount >= 0 ? true : false;
   if(!is_non_negative) //i.e., is negative
     ss << "-";
-  if(((is_non_negative*2-1)*amount) % 100 == 0)
-    ss << (is_non_negative*2-1)*amount/100;
-  else if((is_non_negative*2-1)*amount % 100 < 10)
-    ss << (is_non_negative*2-1)*amount/100 << ".0" << (is_non_negative*2-1)*amount % 100;
-  else
-    ss << (is_non_negative*2-1)*amount/100 << "." << (is_non_negative*2-1)*amount % 100;
-  if(((is_non_negative*2-1)*amount == 100) && strcmp(appended_chars_singular, ""))
+  int amount_sign = is_non_negative*2-1;
+  long long int abs_amount = amount_sign * amount;
+
+  bool amount_is_integer = abs_amount % 100 == 0;
+  bool amount_has_single_digit_cents = !amount_is_integer && (abs_amount % 100 < 10);
+  bool amount_has_double_digit_cents = !(amount_is_integer || amount_has_single_digit_cents);
+
+  num_stream_thousands_sep(ss, abs_amount/100);
+
+  if(amount_has_single_digit_cents)
+    ss <<  ".0";
+  if(amount_has_double_digit_cents)
+    ss << ".";
+  if(!amount_is_integer)
+    ss << abs_amount % 100;
+
+  if((abs_amount == 100) && strcmp(appended_chars_singular, ""))
     ss << appended_chars_singular;
   else
     ss << appended_chars_default;
