@@ -399,13 +399,15 @@ void num_stream_thousands_sep(std::ostringstream& ss, long long int const& amoun
       mini_residue = mini_reduced_amount % 10;
       mini_reduced_amount /= 10;
     }
-    for(int i=num_residue_digits; i<3; ++i)
-    {
-      rev << 0;
-    }
 
     if(reduced_amount > 0)
+    {
+      for(int i=num_residue_digits; i<3; ++i)
+      {
+        rev << 0;
+      }
       rev << sep;
+    }
 
     residue = reduced_amount % 1000;
     residue_gte_100 = residue >= 100;
