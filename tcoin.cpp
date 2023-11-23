@@ -379,6 +379,12 @@ std::string get_username()
 
 void num_stream_thousands_sep(std::ostringstream& ss, long long int const& amount, char sep=',')
 {
+  if(amount == 0)
+  {
+    ss << 0;
+    return;
+  }
+
   std::ostringstream rev;
   long long int reduced_amount = amount/1000;
   int residue = amount % 1000;
@@ -388,8 +394,8 @@ void num_stream_thousands_sep(std::ostringstream& ss, long long int const& amoun
 
   int num_residue_digits = residue_gte_100 + residue_gte_10 + residue_gte_1;
 
-  int mini_reduced_amount = amount/10;
-  int mini_residue = amount % 10;
+  int mini_reduced_amount = residue/10;
+  int mini_residue = residue % 10;
 
   do
   {
@@ -415,8 +421,8 @@ void num_stream_thousands_sep(std::ostringstream& ss, long long int const& amoun
     residue_gte_1 = residue >= 1;
 
     num_residue_digits = residue_gte_100 + residue_gte_10 + residue_gte_1;
-    mini_reduced_amount = reduced_amount/10;
-    mini_residue = reduced_amount % 10;
+    mini_reduced_amount = residue/10;
+    mini_residue = residue % 10;
     reduced_amount = reduced_amount/1000;
   } while(reduced_amount > 0);
 
