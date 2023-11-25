@@ -377,7 +377,7 @@ std::string get_username()
   return username;
 }
 
-void num_stream_thousands_sep(std::ostringstream& ss, long long int const& amount, char sep=',')
+void num_stream_thousands_sep(std::ostringstream& ss, long long int const& amount, char sep='\'')
 {
   if(amount == 0)
   {
@@ -390,7 +390,7 @@ void num_stream_thousands_sep(std::ostringstream& ss, long long int const& amoun
   int residue = amount % 1000;
   bool residue_gte_100 = residue >= 100;
   bool residue_gte_10 = residue >= 10;
-  bool residue_gte_1 = residue >= 1;;
+  bool residue_gte_1 = residue >= 1;
 
   int num_residue_digits = residue_gte_100 + residue_gte_10 + residue_gte_1;
 
@@ -438,6 +438,8 @@ void num_stream_thousands_sep(std::ostringstream& ss, long long int const& amoun
   ss << rev_str;
 }
 
+bool stdout_is_piped = !isatty(fileno(stdout));
+
 std::string formatted_amount(long long int const& amount, char const* appended_chars_default = "", char const* appended_chars_singular = "")
 {
   std::ostringstream ss;
@@ -452,7 +454,10 @@ std::string formatted_amount(long long int const& amount, char const* appended_c
   bool amount_has_single_digit_cents = !amount_is_integer && (abs_amount % 100 < 10);
   bool amount_has_double_digit_cents = !(amount_is_integer || amount_has_single_digit_cents);
 
-  num_stream_thousands_sep(ss, abs_amount/100);
+  if(stdout_is_piped)
+    ss << abs_amount/100;
+  else
+    num_stream_thousands_sep(ss, abs_amount/100);
 
   if(amount_has_single_digit_cents)
     ss <<  ".0";
