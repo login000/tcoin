@@ -377,7 +377,7 @@ std::string get_username()
   return username;
 }
 
-void num_stream_thousands_sep(std::ostringstream& ss, long long int const& amount, char sep='\'')
+void num_stream_thousands_sep(std::ostringstream& ss, long long int const& amount, char sep)
 {
   if(amount == 0)
   {
@@ -440,7 +440,7 @@ void num_stream_thousands_sep(std::ostringstream& ss, long long int const& amoun
 
 bool stdout_is_piped = !isatty(fileno(stdout));
 
-std::string formatted_amount(long long int const& amount, char const* appended_chars_default = "", char const* appended_chars_singular = "")
+std::string formatted_amount(long long int const& amount, char const* appended_chars_default = "", char const* appended_chars_singular = "", char sep='\0')
 {
   std::ostringstream ss;
 
@@ -454,10 +454,10 @@ std::string formatted_amount(long long int const& amount, char const* appended_c
   bool amount_has_single_digit_cents = !amount_is_integer && (abs_amount % 100 < 10);
   bool amount_has_double_digit_cents = !(amount_is_integer || amount_has_single_digit_cents);
 
-  if(stdout_is_piped)
+  if(stdout_is_piped || sep=='\0')
     ss << abs_amount/100;
   else
-    num_stream_thousands_sep(ss, abs_amount/100);
+    num_stream_thousands_sep(ss, abs_amount/100, sep);
 
   if(amount_has_single_digit_cents)
     ss <<  ".0";
@@ -475,11 +475,11 @@ std::string formatted_amount(long long int const& amount, char const* appended_c
   return formatted_string;
 }
 
-void cout_formatted_amount(long long int const& amount, char const* appended_chars_default = "", char const* appended_chars_singular = "", bool negative_with_parentheses = false)
+void cout_formatted_amount(long long int const& amount, char const* appended_chars_default = "", char const* appended_chars_singular = "", bool negative_with_parentheses = false, char sep='\'')
 {
   bool amount_is_negative = (amount < 0);
   if(negative_with_parentheses && amount_is_negative) std::cout << "(";
-  std::cout << formatted_amount(amount, appended_chars_default, appended_chars_singular);
+  std::cout << formatted_amount(amount, appended_chars_default, appended_chars_singular, sep);
   if(negative_with_parentheses && amount_is_negative) std::cout << ")";
 }
 
