@@ -36,6 +36,7 @@
 
 #define LS_HOME_CMD "/bin/ls /home"
 #define BIN_ECHO_CMD "/bin/echo $$"
+#define CHMOD_PERMISSIONS ((S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO)
 #ifndef KROWBAR_OFF
   #define KROWBAR_SCORE_PATH "/home/krowbar/Code/irc/data/tildescores.txt"
   #define JU_SCORE_PATH "/home/jmjl/dev/juju/data/tildescores.txt"
@@ -241,25 +242,40 @@ std::string exec(const char* cmd) {
   return std::string(""); //dummy line, never executes
 }
 
-std::string exec2(const char* cmd, std::string input) {
-  std::string data_length_cmd_str = std::string(cmd) + std::string(PIPED_WORD_COUNT_CMD);
-  const char* data_length_cmd_cstr = data_length_cmd_str.c_str();
-  std::string data_length_str = exec(data_length_cmd_cstr);
-  long long int data_length = strtol_fast(data_length_str.c_str())+1;
+std::string exec2_5(const char* cmd, std::string input, long long int data_length_override = -1) {
+  long long int data_length = data_length_override;
+  if(data_length_override == -1)
+  {
+    std::string data_length_cmd_str = std::string(cmd) + std::string(PIPED_WORD_COUNT_CMD);
+    const char* data_length_cmd_cstr = data_length_cmd_str.c_str();
+    std::string data_length_str = exec(data_length_cmd_cstr);
+    data_length = strtol_fast(data_length_str.c_str())+1;
+  }
+
   std::vector <char> buffer;
-  buffer.reserve(data_length);
+
+  if(data_length > 0)
+  {
+    buffer.reserve(data_length);
+  }
+
   std::string result;
+
   files_t *fp = popen2(cmd);
   if (!fp) throw std::runtime_error("popen2() failed!");
 
   fputs((input+std::string("\n")).c_str(), fp->in);
   std::fflush(fp->in);
 
-  while (!feof(fp->out)) {
+  if(data_length > 0)
+  {
+    while (!feof(fp->out)) {
       if (fgets(buffer.data(), data_length, fp->out) != nullptr)
         result += buffer.data();
+    }
   }
   pclose2(fp);
+
   return result;
 }
 
@@ -341,7 +357,7 @@ int add_file_value(const char* file_name, const long long int &value_to_add, con
   std::ofstream file2(temp_file_path);
   file2 << new_value << "\n";
   file2.close();
-  chmod(temp_file_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+  chmod(temp_file_path, CHMOD_PERMISSIONS);
 
   if(!file2) //error
   {
@@ -355,7 +371,7 @@ int add_file_value(const char* file_name, const long long int &value_to_add, con
     {
       if(!std::rename(temp_file_path, file_path))
       {
-        chmod(file_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+        chmod(file_path, CHMOD_PERMISSIONS);
         break;
       }
     }
@@ -619,7 +635,7 @@ void clear_messages(const char* username)
     {
       fin.close();
       rename(messages_path.c_str(), messages_backup_path.c_str());
-      chmod(messages_backup_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+      chmod(messages_backup_path.c_str(), CHMOD_PERMISSIONS);
       break;
     }
     else
@@ -629,7 +645,7 @@ void clear_messages(const char* username)
   std::ofstream fout(messages_path.c_str(), std::fstream::trunc);
   fout << "\n";
   fout.close();
-  chmod(messages_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+  chmod(messages_path.c_str(), CHMOD_PERMISSIONS);
 }
 
 void show_messages(const char* username)
@@ -908,7 +924,8 @@ int log_on(const char* username)
     codefin >> code2;
     codefin >> code3;
     codefin.close();
-    exec((std::string(TCOIN_BIN_PATH_W_SPACE) + std::string(code2)).c_str());
+
+    exec2_5((std::string(TCOIN_BIN_PATH_W_SPACE) + std::string("code2")).c_str(), std::string(code2), 0); //0 because we don't want any output
 
     fin.open(decrypted_password_file.c_str());
     if(!fin || (fin && file_is_empty(fin)))
@@ -945,6 +962,7 @@ int initialise_user(const char* username, const long long int &base_amount)
   std::string balance_file = std::string(TCOIN_PATH_W_SLASH) + std::string(username) + std::string(".txt");
   std::string messages_file = std::string(TCOIN_MSG_PATH) + std::string(username) + std::string("_messages.txt");
   std::string password_file = std::string(TCOIN_PASS_PATH) + std::string(username) + std::string("_password.txt");
+  std::string password_candidate_file = std::string(TCOIN_PASS_PATH) + std::string(username) + std::string("_password_candidate.txt");
   std::string salt_file = std::string(TCOIN_SALT_PATH) + std::string(username) + std::string("_salt.txt");
   std::string salt_logged_in_file = std::string(TCOIN_SALT_PATH) + std::string(username) + std::string("_salt_logged_in.txt");
 
@@ -955,7 +973,7 @@ int initialise_user(const char* username, const long long int &base_amount)
     std::ofstream fout(balance_file.c_str(), std::fstream::trunc);
     fout << "0\n";
     fout.close();
-    chmod(balance_file.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+    chmod(balance_file.c_str(), CHMOD_PERMISSIONS);
     flag_balance = true;
   }
   fin.close();
@@ -967,7 +985,7 @@ int initialise_user(const char* username, const long long int &base_amount)
     std::ofstream fout(messages_file.c_str(), std::fstream::trunc);
     fout << "\n";
     fout.close();
-    chmod(messages_file.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+    chmod(messages_file.c_str(), CHMOD_PERMISSIONS);
     flag_messages = true;
   }
   fin.close();
@@ -975,6 +993,7 @@ int initialise_user(const char* username, const long long int &base_amount)
   fin.open(salt_file.c_str());
   std::ifstream fin2(password_file.c_str());
   std::ifstream fin3(salt_logged_in_file.c_str());
+  std::ifstream fin4;
   if((!fin && !fin3) || !fin2 || (fin && file_is_empty(fin)) || (fin3 && file_is_empty(fin3))  || file_is_empty(fin2)) //if salt or password file is missing or empty, we'd have to set up a new salt and password (i.e., salt file encrypted with passphrase)
   {
     fin.close();
@@ -997,7 +1016,7 @@ int initialise_user(const char* username, const long long int &base_amount)
     }
     fout << "\n";
     fout.close();
-    chmod(salt_file.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+    chmod(salt_file.c_str(), CHMOD_PERMISSIONS);
 
     std::cout << "\nYour salt and/or password file(s) are missing. A new salt and password file will be created. Please enter your desired passphrase and re-enter to confirm the same below. You will need to enter it to log onto tildecoin. If you ^C before confirming the passphrase, you'll have created an empty password file and would have to run `tcoin init` again.\n\n";
 
@@ -1007,27 +1026,46 @@ int initialise_user(const char* username, const long long int &base_amount)
     codefin >> code2;
     codefin >> code3;
     codefin.close();
-    exec((std::string(TCOIN_BIN_PATH_W_SPACE) + std::string(code1)).c_str());
+    exec2_5((std::string(TCOIN_BIN_PATH_W_SPACE) + std::string("code1")).c_str(), std::string(code1), 0); //0 because we don't want any output
 
-    fin.open(password_file.c_str());
-    if(!fin || (fin && file_is_empty(fin)))
+    //this file shouldn't exist, except if code1 was run by someone/some program other than tcoin,
+    //in which case the password_file wouldn't have been removed, so we should fail if we detect
+    //an already existing password_file
+    fin4.open(password_file.c_str()); // this file shouldn't exist, so something has gone wrong if it does
+    fin.open(password_candidate_file.c_str());
+    if(!fin || (fin && file_is_empty(fin) || fin4))
     {
       if(file_is_empty(fin))
-        chmod(password_file.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+        chmod(password_candidate_file.c_str(), CHMOD_PERMISSIONS);
       fin.close();
+      if(fin4) //password_file already exists, abort and don't replace
+      {
+        //just making sure the file has enough permissions to be deleted, since scrypt would have created it with different permissions
+        chmod(password_candidate_file.c_str(), CHMOD_PERMISSIONS);
+        remove(password_candidate_file.c_str());
+      }
+      fin4.close();
       std::cout << "\nSomething went wrong in the password-file generation process. Your password file is now empty. You will have to run `tcoin init` again and choose a new passphrase.\n\n";
       return 1;
     }
     else
     {
-      chmod(password_file.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
       fin.close();
+      chmod(password_candidate_file.c_str(), CHMOD_PERMISSIONS);
+      //rename password candidate file to password file to actualise the creation of the account
+      while(1)
+      {
+        if(!std::rename(password_candidate_file.c_str(), password_file.c_str()))
+          break;
+      }
+      chmod(password_file.c_str(), CHMOD_PERMISSIONS);
     }
     flag_password_and_salt=true;
   }
   fin.close();
   fin2.close();
   fin3.close();
+  fin4.close();
   if(flag_balance==true)
   {
     std::cout << "\nWelcome to tildecoin. ";
@@ -1095,7 +1133,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
   fin2.close();
   fin3.close();
 
-  chmod(receiver_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+  chmod(receiver_path, CHMOD_PERMISSIONS);
 
   delete[] receiver_salt_path;
   delete[] receiver_salt_logged_in_path;
@@ -1155,7 +1193,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
         fout << "\n\n";
       }
       fout.close();
-      chmod(really_temp_receiver_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+      chmod(really_temp_receiver_path, CHMOD_PERMISSIONS);
 
       if(!fout) //error
       {
@@ -1180,7 +1218,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
           break;
       }
 
-      chmod(receiver_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+      chmod(receiver_path, CHMOD_PERMISSIONS);
 
       delete[] really_temp_receiver_path;
       delete[] temp_receiver_path;
@@ -1208,7 +1246,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
           else
             fin.close();
           fin2.close();
-          chmod(program_receiver_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+          chmod(program_receiver_path.c_str(), CHMOD_PERMISSIONS);
         }
 
         while(1)
@@ -1246,7 +1284,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
               fout << "\n";
             }
             fout.close();
-            chmod(really_temp_program_receiver_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+            chmod(really_temp_program_receiver_path.c_str(), CHMOD_PERMISSIONS);
 
             if(!fout) //error
             {
@@ -1271,7 +1309,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
                 break;
             }
 
-            chmod(program_receiver_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+            chmod(program_receiver_path.c_str(), CHMOD_PERMISSIONS);
             break;
           }//if statement with !std::rename for receiver's program accounting _messages file
         }//while loop for program accounting receiver's _messages file
@@ -1303,7 +1341,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
 
           fin.open(temp_sender_path);
           fout.open(really_temp_sender_path);
-          chmod(really_temp_sender_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+          chmod(really_temp_sender_path, CHMOD_PERMISSIONS);
 
           fout << fin.rdbuf();
 
@@ -1510,7 +1548,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
             fin2.close();
             fin3.close();
 
-            chmod(receiver_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+            chmod(receiver_path, CHMOD_PERMISSIONS);
 
             delete[] receiver_salt_path;
             delete[] receiver_salt_logged_in_path;
@@ -1544,7 +1582,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
                     else
                       fin.close();
                     fin2.close();
-                    chmod(program_receiver_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+                    chmod(program_receiver_path.c_str(), CHMOD_PERMISSIONS);
                   }
 
                   while(1)
@@ -1575,7 +1613,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
                           else
                             fin.close();
                           fin2.close();
-                          chmod(program_receiver_total_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+                          chmod(program_receiver_total_path.c_str(), CHMOD_PERMISSIONS);
                         }
 
                         while(1)
@@ -1716,17 +1754,31 @@ int main(int argc, char *argv[])
     codefin >> code2;
     codefin >> code3;
     codefin.close();
-    if(argc==2 && !strctcmp(argv[1], code1))
+    if(argc==2 && !strctcmp(argv[1], "code1"))
     {
-      std::string salt_file = std::string(TCOIN_SALT_PATH) + get_username() + std::string("_salt.txt");
-      std::string password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_password.txt");
-      execl(TCOIN_SCRYPT_PATH, "scrypt", "enc", "-m", "0.125", "-t", "5", salt_file.c_str(), password_file.c_str(), NULL);
+      //to set the password when doing 'tcoin init', we create a hashed + encrypted <username>_password_candidate.txt
+      //the code that calls this will then check if <username>_password.txt doesn't already exist, and if it doesn't,
+      //it'll move <username>_password_candidate.txt to <username>_password.txt, otherwise it'll delete
+      //<username>_password_candidate.txt
+      std::fgets(codecheck, 514, stdin);
+      codecheck[513] = codecheck[514] = '\0';
+      if(!strctcmp(codecheck, code1))
+      {
+        std::string salt_file = std::string(TCOIN_SALT_PATH) + get_username() + std::string("_salt.txt");
+        std::string password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_password_candidate.txt");
+        execl(TCOIN_SCRYPT_PATH, "scrypt", "enc", "-m", "0.125", "-t", "5", salt_file.c_str(), password_file.c_str(), NULL);
+      }
     }
-    if(argc==2 && !strctcmp(argv[1], code2))
+    if(argc==2 && !strctcmp(argv[1], "code2"))
     {
-      std::string decrypted_password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_decrypted_password.txt");
-      std::string password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_password.txt");
-      execl(TCOIN_SCRYPT_PATH, "scrypt", "dec", "-t", "15", password_file.c_str(), decrypted_password_file.c_str(), NULL);
+      std::fgets(codecheck, 514, stdin);
+      codecheck[513] = codecheck[514] = '\0';
+      if(!strctcmp(codecheck, code2))
+      {
+        std::string decrypted_password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_decrypted_password.txt");
+        std::string password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_password.txt");
+        execl(TCOIN_SCRYPT_PATH, "scrypt", "dec", "-t", "15", password_file.c_str(), decrypted_password_file.c_str(), NULL);
+      }
     }
     if(argc==2 && !strctcmp(argv[1], "pcoin_list"))
     {
@@ -1739,9 +1791,13 @@ int main(int argc, char *argv[])
   //If ^C is sent while doing `tcoin on`, <username>_dercrypted_password.txt gets left behind
   //this might cause the program to interpret the salt and password to be corrupted, and might
   //ask to create a new passphrase. To prevent this, we cleanup _decrypted_password.txt on every
-  //start of tcoin
+  //start of tcoin. We do the same for _password_candidate.txt, which would be left over if someone
+  //were to inadvertently find code1 and use that to try to replace the password without having logged in
   {
     std::string decrypted_password_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_decrypted_password.txt");
+    remove(decrypted_password_file.c_str());
+
+    std::string password_candidate_file = std::string(TCOIN_PASS_PATH) + get_username() + std::string("_password_candidate.txt");
     remove(decrypted_password_file.c_str());
   }
 

@@ -42,6 +42,8 @@
 
 #define LS_HOME_CMD "/bin/ls /home"
 #define BIN_ECHO_CMD "/bin/echo $$"
+#define CHMOD_PERMISSIONS ((S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO)
+#define CHMOD_PROGRAM_KEY_PERMISSIONS (S_IRUSR & ~S_IWUSR & ~S_IXUSR & ~S_IRWXG & ~S_IRWXO)
 #ifndef KROWBAR_OFF
   #define KROWBAR_SCORE_PATH "/home/krowbar/Code/irc/data/tildescores.txt"
   #define JU_SCORE_PATH "/home/jmjl/dev/juju/data/tildescores.txt"
@@ -354,7 +356,7 @@ int add_file_value(const char* file_name, const long long int &value_to_add, con
   file2 << new_value << "\n";
   file2.close();
 
-  chmod(temp_file_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+  chmod(temp_file_path, CHMOD_PERMISSIONS);
 
   if(!file2) //error
   {
@@ -368,7 +370,7 @@ int add_file_value(const char* file_name, const long long int &value_to_add, con
     {
       if(!std::rename(temp_file_path, file_path))
       {
-        chmod(file_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+        chmod(file_path, CHMOD_PERMISSIONS);
         break;
       }
     }
@@ -675,7 +677,7 @@ std::string refresh_pcoin_key()
 
   if(!std::rename(program_key_path, temp_program_key_path))
   {
-    chmod(temp_program_key_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+    chmod(temp_program_key_path, CHMOD_PERMISSIONS);
     std::ofstream fin2(temp2_program_key_path);
 
     if(!fin2)
@@ -685,7 +687,7 @@ std::string refresh_pcoin_key()
       {
         if(!std::rename(temp_program_key_path, program_key_path))
         {
-          chmod(program_key_path, S_IRUSR & ~S_IWUSR & ~S_IXUSR & ~S_IRWXG & ~S_IRWXO);
+          chmod(program_key_path, CHMOD_PROGRAM_KEY_PERMISSIONS);
           break;
         }
       }
@@ -698,13 +700,13 @@ std::string refresh_pcoin_key()
     new_key = exec(PCOIN_NEW_KEY_CMD);
     fin2 << new_key << "\n";
     fin2.close();
-    chmod(temp2_program_key_path, S_IRUSR & ~S_IWUSR & ~S_IXUSR & ~S_IRWXG & ~S_IRWXO);
+    chmod(temp2_program_key_path, CHMOD_PROGRAM_KEY_PERMISSIONS);
 
     while(1)
     {
       if(!std::rename(temp2_program_key_path, program_key_path))
       {
-        chmod(program_key_path, S_IRUSR & ~S_IWUSR & ~S_IXUSR & ~S_IRWXG & ~S_IRWXO);
+        chmod(program_key_path, CHMOD_PROGRAM_KEY_PERMISSIONS);
         while(1)
         {
           if(!std::remove(temp_program_key_path))
@@ -828,7 +830,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
   fin2.close();
   fin3.close();
 
-  chmod(receiver_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+  chmod(receiver_path, CHMOD_PERMISSIONS);
 
   delete[] receiver_salt_path;
   delete[] receiver_salt_logged_in_path;
@@ -888,7 +890,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
         fout << "\n\n";
       }
       fout.close();
-      chmod(really_temp_receiver_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+      chmod(really_temp_receiver_path, CHMOD_PERMISSIONS);
 
       if(!fout) //error
       {
@@ -913,7 +915,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
           break;
       }
 
-      chmod(receiver_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+      chmod(receiver_path, CHMOD_PERMISSIONS);
 
       delete[] really_temp_receiver_path;
       delete[] temp_receiver_path;
@@ -941,7 +943,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
           else
             fin.close();
           fin2.close();
-          chmod(program_receiver_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+          chmod(program_receiver_path.c_str(), CHMOD_PERMISSIONS);
         }
 
         while(1)
@@ -979,7 +981,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
               fout << "\n";
             }
             fout.close();
-            chmod(really_temp_program_receiver_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+            chmod(really_temp_program_receiver_path.c_str(), CHMOD_PERMISSIONS);
 
             if(!fout) //error
             {
@@ -1004,7 +1006,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
                 break;
             }
 
-            chmod(program_receiver_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+            chmod(program_receiver_path.c_str(), CHMOD_PERMISSIONS);
             break;
           }//if statement with !std::rename for receiver's program accounting _messages file
         }//while loop for program accounting receiver's _messages file
@@ -1036,7 +1038,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
 
           fin.open(temp_sender_path);
           fout.open(really_temp_sender_path);
-          chmod(really_temp_sender_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+          chmod(really_temp_sender_path, CHMOD_PERMISSIONS);
 
           fout << fin.rdbuf();
 
@@ -1130,7 +1132,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
               else
                 fin.close();
               fin2.close();
-              chmod(program_sender_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+              chmod(program_sender_path.c_str(), CHMOD_PERMISSIONS);
             }
 
             while(1)
@@ -1168,7 +1170,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
                   fout << "\n";
                 }
                 fout.close();
-                chmod(really_temp_program_sender_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+                chmod(really_temp_program_sender_path.c_str(), CHMOD_PERMISSIONS);
 
                 if(!fout) //error
                 {
@@ -1193,7 +1195,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
                     break;
                 }
 
-                chmod(program_sender_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+                chmod(program_sender_path.c_str(), CHMOD_PERMISSIONS);
                 break;
               }//if statement with !std::rename for sender's program accounting _messages file
             }//while loop for program accounting sender's _messages file
@@ -1288,7 +1290,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
           else
             fin.close();
           fin2.close();
-          chmod(program_sender_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+          chmod(program_sender_path.c_str(), CHMOD_PERMISSIONS);
         }
 
         while(1)
@@ -1324,7 +1326,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
                 else
                   fin.close();
                 fin2.close();
-                chmod(program_sender_total_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+                chmod(program_sender_total_path.c_str(), CHMOD_PERMISSIONS);
               }
 
               while(1)
@@ -1410,7 +1412,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
                         fin2.close();
                         fin3.close();
 
-                        chmod(receiver_path, (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+                        chmod(receiver_path, CHMOD_PERMISSIONS);
 
                         delete[] receiver_salt_path;
                         delete[] receiver_salt_logged_in_path;
@@ -1444,7 +1446,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
                                 else
                                   fin.close();
                                 fin2.close();
-                                chmod(program_receiver_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+                                chmod(program_receiver_path.c_str(), CHMOD_PERMISSIONS);
                               }
 
                               while(1)
@@ -1475,7 +1477,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
                                       else
                                         fin.close();
                                       fin2.close();
-                                      chmod(program_receiver_total_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+                                      chmod(program_receiver_total_path.c_str(), CHMOD_PERMISSIONS);
                                     }
 
                                     while(1)
@@ -1682,7 +1684,7 @@ long long int get_internal_balance(const char* username)
       }
       else
         fin.close();
-      chmod(internal_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+      chmod(internal_path.c_str(), CHMOD_PERMISSIONS);
     }
 
     std::string internal_username = std::string(PROG_ACT_W_SLASH) + get_username() + std::string("/") + std::string(username);
@@ -1708,7 +1710,7 @@ long long int get_internal_total_owed()
       }
       else
         fin.close();
-      chmod(internal_total_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+      chmod(internal_total_path.c_str(), CHMOD_PERMISSIONS);
     }
 
     std::string internal_total_username = std::string(PROG_ACT_W_SLASH) + get_username() + std::string("/_TOTAL");
@@ -1757,7 +1759,7 @@ int add_internal_balance(const char* username, const long long int value_to_add)
       else
         fin.close();
       fin2.close();
-      chmod(internal_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+      chmod(internal_path.c_str(), CHMOD_PERMISSIONS);
     }
 
     int return_value;
@@ -1795,7 +1797,7 @@ int add_internal_balance(const char* username, const long long int value_to_add)
             else
               fin.close();
             fin2.close();
-            chmod(internal_total_path.c_str(), (S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO);
+            chmod(internal_total_path.c_str(), CHMOD_PERMISSIONS);
           }
 
           while(1)
