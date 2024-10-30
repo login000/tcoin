@@ -129,11 +129,11 @@ else
       /bin/echo "Sorry, '`/usr/bin/realpath -s $1`/tcoin/secrets/tcoin_codez' already exists."
       exit 1
     else
-      /bin/echo "`cat /dev/urandom | base64 | head -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'` `cat /dev/urandom | base64 | head -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'` `cat /dev/urandom | base64 | head -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'`" > "`/usr/bin/realpath -s $1`/tcoin/secrets/tcoin_codez"
+      /bin/echo "`/bin/cat /dev/urandom | base64 | head -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'` `/bin/cat /dev/urandom | base64 | head -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'` `/bin/cat /dev/urandom | base64 | head -c 512 | tr -d '\n' | tr '+' '-' | tr '/' '_'`" > "`/usr/bin/realpath -s $1`/tcoin/secrets/tcoin_codez"
       /bin/chmod 400 "`/usr/bin/realpath -s $1`/tcoin/secrets/tcoin_codez"
     fi
   fi
-    if [ -d "`/usr/bin/realpath -s $1`/tcoin/bin" ]
+  if [ -d "`/usr/bin/realpath -s $1`/tcoin/bin" ]
   then
     /bin/echo "Sorry, '`/usr/bin/realpath -s $1`/tcoin/bin' already exists."
     exit 1
@@ -141,6 +141,15 @@ else
     /bin/mkdir "`/usr/bin/realpath -s $1`/tcoin/bin"
     /bin/chmod 700 "`/usr/bin/realpath -s $1`/tcoin/bin"
     /bin/chmod u+s "`/usr/bin/realpath -s $1`/tcoin/bin"
+
+    if [ -d "`/usr/bin/realpath -s $1`/tcoin/bin/x86_64-linux-musl-container" ]
+    then
+      /bin/echo "Sorry, '`/usr/bin/realpath -s $1`/tcoin/bin/x86_64-linux-musl-container' already exists."
+      exit 1
+    else
+      /bin/cat ./x86_64-linux-musl-container.tar.xz* | /usr/bin/tar xJf - -C "`/usr/bin/realpath -s $1`/tcoin/bin/"
+      /bin/chmod -R go-rwx "`/usr/bin/realpath -s $1`/tcoin/bin/x86_64-linux-musl-container"
+    fi
     if [ -e "`/usr/bin/realpath -s $1`/tcoin/bin/scrypt" ]
     then
       /bin/echo "Sorry, '`/usr/bin/realpath -s $1`/tcoin/bin/scrypt' already exists."
