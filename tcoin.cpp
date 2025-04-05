@@ -36,7 +36,8 @@
 
 #define LS_HOME_CMD "/bin/ls /home"
 #define BIN_ECHO_CMD "/bin/echo $$"
-#define CHMOD_PERMISSIONS ((S_IRUSR | S_IWUSR) & ~S_IRWXG & ~S_IRWXO)
+#define CHMOD_PERMISSIONS ((S_IRUSR) & ~S_IWUSR & ~S_IXUSR & ~S_IRWXG & ~S_IRWXO)
+#define CHMOD_ENABLEWRITE_PERMISSIONS ((S_IRUSR | S_IWUSR) & ~S_IXUSR & ~S_IRWXG & ~S_IRWXO)
 #ifndef KROWBAR_OFF
   #define KROWBAR_SCORE_PATH "/home/krowbar/Code/irc/data/tildescores.txt"
   #define JU_SCORE_PATH "/home/jmjl/dev/juju/data/tildescores.txt"
@@ -357,7 +358,7 @@ int add_file_value(const char* file_name, const long long int &value_to_add, con
   std::ofstream file2(temp_file_path);
   file2 << new_value << "\n";
   file2.close();
-  chmod(temp_file_path, CHMOD_PERMISSIONS);
+  chmod(temp_file_path, CHMOD_ENABLEWRITE_PERMISSIONS);
 
   if(!file2) //error
   {
@@ -1051,7 +1052,7 @@ int initialise_user(const char* username, const long long int &base_amount)
     else
     {
       fin.close();
-      chmod(password_candidate_file.c_str(), CHMOD_PERMISSIONS);
+      chmod(password_candidate_file.c_str(), CHMOD_ENABLEWRITE_PERMISSIONS);
       //rename password candidate file to password file to actualise the creation of the account
       while(1)
       {
@@ -1133,7 +1134,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
   fin2.close();
   fin3.close();
 
-  chmod(receiver_path, CHMOD_PERMISSIONS);
+  chmod(receiver_path, CHMOD_ENABLEWRITE_PERMISSIONS);
 
   delete[] receiver_salt_path;
   delete[] receiver_salt_logged_in_path;
@@ -1193,7 +1194,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
         fout << "\n\n";
       }
       fout.close();
-      chmod(really_temp_receiver_path, CHMOD_PERMISSIONS);
+      chmod(really_temp_receiver_path, CHMOD_ENABLEWRITE_PERMISSIONS);
 
       if(!fout) //error
       {
@@ -1217,7 +1218,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
         if(!std::rename(temp_receiver_path, receiver_path))
           break;
       }
-
+      // restoring original permissions of receiver_path
       chmod(receiver_path, CHMOD_PERMISSIONS);
 
       delete[] really_temp_receiver_path;
@@ -1246,7 +1247,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
           else
             fin.close();
           fin2.close();
-          chmod(program_receiver_path.c_str(), CHMOD_PERMISSIONS);
+          chmod(program_receiver_path.c_str(), CHMOD_ENABLEWRITE_PERMISSIONS);
         }
 
         while(1)
@@ -1284,7 +1285,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
               fout << "\n";
             }
             fout.close();
-            chmod(really_temp_program_receiver_path.c_str(), CHMOD_PERMISSIONS);
+            chmod(really_temp_program_receiver_path.c_str(), CHMOD_ENABLEWRITE_PERMISSIONS);
 
             if(!fout) //error
             {
@@ -1308,7 +1309,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
               if(!std::rename(temp_program_receiver_path.c_str(), program_receiver_path.c_str()))
                 break;
             }
-
+            // restoring original permissions of program_receiver_path
             chmod(program_receiver_path.c_str(), CHMOD_PERMISSIONS);
             break;
           }//if statement with !std::rename for receiver's program accounting _messages file
@@ -1331,6 +1332,9 @@ int send_message(const char* sender_username, const char* receiver_username, con
       std::strcat(temp_sender_path, random_string.c_str());
       std::strcat(temp_sender_path, "_messages.txt"); // length = 13
 
+      // enable sender_path to be rename-able
+      chmod(sender_path, CHMOD_ENABLEWRITE_PERMISSIONS);
+
       while(1)
       {
         if(!std::rename(sender_path, temp_sender_path))
@@ -1341,7 +1345,7 @@ int send_message(const char* sender_username, const char* receiver_username, con
 
           fin.open(temp_sender_path);
           fout.open(really_temp_sender_path);
-          chmod(really_temp_sender_path, CHMOD_PERMISSIONS);
+          chmod(really_temp_sender_path, CHMOD_ENABLEWRITE_PERMISSIONS);
 
           fout << fin.rdbuf();
 
@@ -1407,6 +1411,8 @@ int send_message(const char* sender_username, const char* receiver_username, con
             if(!std::rename(temp_sender_path, sender_path))
               break;
           }
+          // restoring sender_path to its original permissions
+          chmod(sender_path, CHMOD_PERMISSIONS);
 
           delete[] really_temp_sender_path;
           delete[] temp_sender_path;
@@ -1491,6 +1497,9 @@ int send(const char* sender_username, const char* receiver_username, const long 
       std::strcat(sender_path, sender_username);
       std::strcat(sender_path, ".txt");
 
+      // enable sender_path to be rename-able
+      chmod(sender_path, CHMOD_ENABLEWRITE_PERMISSIONS);
+
       while(1)
       {
         if(!std::rename(sender_path, temp_sender_path))
@@ -1548,7 +1557,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
             fin2.close();
             fin3.close();
 
-            chmod(receiver_path, CHMOD_PERMISSIONS);
+            chmod(receiver_path, CHMOD_ENABLEWRITE_PERMISSIONS);
 
             delete[] receiver_salt_path;
             delete[] receiver_salt_logged_in_path;
@@ -1582,7 +1591,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
                     else
                       fin.close();
                     fin2.close();
-                    chmod(program_receiver_path.c_str(), CHMOD_PERMISSIONS);
+                    chmod(program_receiver_path.c_str(), CHMOD_ENABLEWRITE_PERMISSIONS);
                   }
 
                   while(1)
@@ -1613,7 +1622,7 @@ int send(const char* sender_username, const char* receiver_username, const long 
                           else
                             fin.close();
                           fin2.close();
-                          chmod(program_receiver_total_path.c_str(), CHMOD_PERMISSIONS);
+                          chmod(program_receiver_total_path.c_str(), CHMOD_ENABLEWRITE_PERMISSIONS);
                         }
 
                         while(1)
@@ -1627,6 +1636,8 @@ int send(const char* sender_username, const char* receiver_username, const long 
                               if(!std::rename(temp_program_receiver_total_path.c_str(), program_receiver_total_path.c_str()))
                                 break;
                             }
+                            // restore correct permissions to program_receiver_total_path
+                            chmod(program_receiver_total_path.c_str(), CHMOD_PERMISSIONS);
                             break;
                           }
                         }
@@ -1637,6 +1648,8 @@ int send(const char* sender_username, const char* receiver_username, const long 
                         if(!std::rename(temp_program_receiver_path.c_str(), program_receiver_path.c_str()))
                           break;
                       }
+                      // restore correct permissions to program_receiver_path
+                      chmod(program_receiver_path.c_str(), CHMOD_PERMISSIONS);
                       break;
                     }//if statement with !std::rename for receiver's program accounting receiver balance file
                   }//while loop for program accounting receiver's balance file
@@ -1647,6 +1660,9 @@ int send(const char* sender_username, const char* receiver_username, const long 
                   if(!std::rename(temp_receiver_path, receiver_path))
                     break;
                 }
+                // restore correct permissions to receiver_path
+                chmod(receiver_path, CHMOD_PERMISSIONS);
+
                 delete[] temp_receiver_path;
                 delete[] receiver_path;
                 delete[] temp_receiver_username;
@@ -1679,6 +1695,8 @@ int send(const char* sender_username, const char* receiver_username, const long 
             if(!std::rename(temp_sender_path, sender_path))
               break;
           }
+          // restore the correct permissions to sender_path
+          chmod(sender_path, CHMOD_PERMISSIONS);
 
           delete[] temp_sender_path;
           delete[] sender_path;
